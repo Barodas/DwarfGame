@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour
     public PlayerVariables PlayerVars;
     public GameObject BodySprite;
 
+    private Tilemap _terrain;
+
     private bool _isFalling;
     private bool _isJumping;
 
@@ -15,7 +17,10 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        _terrain = TilemapManager.Instance.TerrainTilemap;
     }
+
+    // TODO: Try tracking the 4 corners of the character model and using those for checks in each direction rather than current single checks
 
     private void Update()
     {
@@ -23,8 +28,7 @@ public class PlayerController : MonoBehaviour
 
         if(_isJumping)
         {
-            // TODO: Check for collision with roof
-            if(transform.position.y >= _targetJumpHeight)
+            if(transform.position.y >= _targetJumpHeight || HasHitCeiling())
             {
                 _isJumping = false;
             }
@@ -41,7 +45,7 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                if (Input.GetKeyDown(KeyCode.Space))
+                if (Input.GetKey(KeyCode.Space))
                 {
                     _targetJumpHeight = transform.position.y + (PlayerVars.JumpHeightBase * PlayerVars.JumpHeightModifier[PlayerVars.JumpHeightCurModifier]) + 0.2f;
                     _isJumping = true;
@@ -53,8 +57,20 @@ public class PlayerController : MonoBehaviour
         float input = Input.GetAxisRaw("Horizontal");
         if (input != 0)
         {
-            // TODO: Wall Detection
-            transform.Translate(Vector3.right * input * (PlayerVars.MoveSpeedBase * PlayerVars.MovespeedMultiplier[PlayerVars.MoveSpeedCurModifier]));
+            Vector3 direction = Vector3.right * input * (PlayerVars.MoveSpeedBase * PlayerVars.MovespeedMultiplier[PlayerVars.MoveSpeedCurModifier]);
+            Vector3 target = transform.position + direction;
+            float playerWidthOffset = target.x > 0 ? PlayerVars.PlayerWidth + 0.01f : -PlayerVars.PlayerWidth - 0.01f;
+            target.x += playerWidthOffset;
+
+            if(_terrain.HasTile(_terrain.WorldToCell(target)))
+            {
+                target.x = Mathf.RoundToInt(target.x);
+                target.x -= playerWidthOffset;
+
+                direction = target - transform.position;
+            }
+
+            transform.Translate(direction);
         }
 
         
@@ -80,14 +96,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private bool HasHitCeiling()
+    {
+        Vector3 right = transform.position + new Vector3(PlayerVars.PlayerWidth, PlayerVars.PlayerHeightFromCenter, 0);
+        Vector3 left = transform.position + new Vector3(-PlayerVars.PlayerWidth, PlayerVars.PlayerHeightFromCenter, 0);
 
+        return _terrain.HasTile(_terrain.WorldToCell(right)) || _terrain.HasTile(_terrain.WorldToCell(left));
+    }
 
     private void CheckGround()
     {
         Vector3 right = transform.position + new Vector3(PlayerVars.PlayerWidth, -0.55f, 0);
         Vector3 left = transform.position + new Vector3(-PlayerVars.PlayerWidth, -0.55f, 0);
 
-        Tilemap terrain = TilemapManager.Instance.TerrainTilemap;
-        _isFalling = !terrain.HasTile(terrain.WorldToCell(right)) && !terrain.HasTile(terrain.WorldToCell(left));
+        _isFalling = !_terrain.HasTile(_terrain.WorldToCell(right)) && !_terrain.HasTile(_terrain.WorldToCell(left));
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class TilemapManager : MonoBehaviour
@@ -10,8 +8,7 @@ public class TilemapManager : MonoBehaviour
     public Tilemap TerrainTilemap;
     public Tilemap TerrainBackgroundTilemap;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         if(Instance == null)
         {
@@ -19,7 +16,6 @@ public class TilemapManager : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         

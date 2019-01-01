@@ -13,5 +13,6 @@ public class PlayerVariables : ScriptableObject
     public int JumpHeightCurModifier = 0;
 
     public float PlayerWidth = 0.5f;
+    public float PlayerHeightFromCenter = 0.4f;
     public float FallSpeedBase = 3f;
 }
