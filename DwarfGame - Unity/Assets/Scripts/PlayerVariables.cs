@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [CreateAssetMenu]
 public class PlayerVariables : ScriptableObject
@@ -9,7 +7,11 @@ public class PlayerVariables : ScriptableObject
     public float[] MovespeedMultiplier = { 1f };
     public int MoveSpeedCurModifier = 0;
 
-    public float JumpStrengthBase = 5f;
-    public float[] JumpStrengthMultiplier = { 1f };
-    public int JumpStrengthCurModifier = 0;
+    public float JumpSpeedBase = 0.08f;
+    public float JumpHeightBase = 5f;
+    public float[] JumpHeightModifier = { 1f };
+    public int JumpHeightCurModifier = 0;
+
+    public float PlayerWidth = 0.5f;
+    public float FallSpeedBase = 3f;
 }

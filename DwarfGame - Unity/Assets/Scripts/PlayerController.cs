@@ -5,30 +5,59 @@ using UnityEngine.Tilemaps;
 
 public class PlayerController : MonoBehaviour
 {
-    private Rigidbody2D _rb;
-
     public PlayerVariables PlayerVars;
     public GameObject BodySprite;
 
-    // Start is called before the first frame update
-    void Start()
+    private bool _isFalling;
+    private bool _isJumping;
+
+    private float _targetJumpHeight;
+
+    private void Start()
     {
-        _rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
+        CheckGround();
+
+        if(_isJumping)
+        {
+            // TODO: Check for collision with roof
+            if(transform.position.y >= _targetJumpHeight)
+            {
+                _isJumping = false;
+            }
+            else
+            {
+                transform.Translate(Vector3.up * PlayerVars.JumpSpeedBase);
+            }
+        }
+        else
+        {
+            if (_isFalling)
+            {
+                transform.Translate(Vector3.down * PlayerVars.FallSpeedBase);
+            }
+            else
+            {
+                if (Input.GetKeyDown(KeyCode.Space))
+                {
+                    _targetJumpHeight = transform.position.y + (PlayerVars.JumpHeightBase * PlayerVars.JumpHeightModifier[PlayerVars.JumpHeightCurModifier]) + 0.2f;
+                    _isJumping = true;
+                }
+            }
+        }
+        
+
         float input = Input.GetAxisRaw("Horizontal");
         if (input != 0)
         {
-            _rb.AddForce(Vector3.right * input * (PlayerVars.MoveSpeedBase * PlayerVars.MovespeedMultiplier[PlayerVars.MoveSpeedCurModifier]));
+            // TODO: Wall Detection
+            transform.Translate(Vector3.right * input * (PlayerVars.MoveSpeedBase * PlayerVars.MovespeedMultiplier[PlayerVars.MoveSpeedCurModifier]));
         }
 
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            _rb.AddForce(Vector3.up * (PlayerVars.JumpStrengthBase * PlayerVars.JumpStrengthMultiplier[PlayerVars.JumpStrengthCurModifier]), ForceMode2D.Impulse);
-        }
+        
 
         if(Input.GetMouseButtonDown(0))
         {
@@ -49,5 +78,16 @@ public class PlayerController : MonoBehaviour
         {
             BodySprite.transform.localScale = new Vector3(1, 1, 1);
         }
+    }
+
+
+
+    private void CheckGround()
+    {
+        Vector3 right = transform.position + new Vector3(PlayerVars.PlayerWidth, -0.55f, 0);
+        Vector3 left = transform.position + new Vector3(-PlayerVars.PlayerWidth, -0.55f, 0);
+
+        Tilemap terrain = TilemapManager.Instance.TerrainTilemap;
+        _isFalling = !terrain.HasTile(terrain.WorldToCell(right)) && !terrain.HasTile(terrain.WorldToCell(left));
     }
 }
