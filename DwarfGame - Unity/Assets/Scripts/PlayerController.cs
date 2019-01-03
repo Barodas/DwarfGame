@@ -10,22 +10,30 @@ namespace DwarfGame
         
         private Tilemap _terrain;
     
-        private bool _isFalling;
         private bool _isJumping;
     
         private float _targetJumpHeight;
+
+        private Bounds _bounds;
+
+        public Bounds Bounds
+        {
+            get
+            {
+                _bounds.Center = transform.position;
+                return _bounds;
+            }
+            private set => _bounds = value;
+        }
     
         private void Start()
         {
             _terrain = TilemapManager.Instance.TerrainTilemap;
+            Bounds = new Bounds(transform.position);
         }
     
-        // TODO: Try tracking the 4 corners of the character model and using those for checks in each direction rather than current single checks
-    
         private void Update()
-        {
-            CheckGround();
-    
+        { 
             if(_isJumping)
             {
                 if(transform.position.y >= _targetJumpHeight || HasHitCeiling())
@@ -39,7 +47,7 @@ namespace DwarfGame
             }
             else
             {
-                if (_isFalling)
+                if (IsFalling())
                 {
                     transform.Translate(Vector3.down * PlayerVars.FallSpeedBase);
                 }
@@ -58,17 +66,24 @@ namespace DwarfGame
             float input = Input.GetAxisRaw("Horizontal");
             if (input != 0)
             {
-                Vector3 direction = Vector3.right * input * (PlayerVars.MoveSpeedBase * PlayerVars.MovespeedMultiplier[PlayerVars.MoveSpeedCurModifier]);
-                Vector3 target = transform.position + direction;
-                float playerWidthOffset = direction.x > 0 ? PlayerVars.PlayerWidth + 0.01f : -PlayerVars.PlayerWidth - 0.01f;
-                target.x += playerWidthOffset;
-    
-                Vector3 targetHead;
-                Vector3 targetFeet = targetHead = target;
-                targetHead.y += PlayerVars.PlayerHeightFromCenter;
-                targetFeet.y -= 0.49f;
-    
-                if(_terrain.HasTile(_terrain.WorldToCell(targetHead)) || _terrain.HasTile(_terrain.WorldToCell(targetFeet)))
+                Bounds targetBounds = Bounds;
+                Vector2 direction = Vector2.right * input * (PlayerVars.MoveSpeedBase * PlayerVars.MovespeedMultiplier[PlayerVars.MoveSpeedCurModifier]);
+                targetBounds.Center += direction;
+
+                TileBase upper, lower;
+                upper = _terrain.GetTile(_terrain.WorldToCell(direction.x < 0 ? targetBounds.TopLeft : targetBounds.TopRight));
+                lower = _terrain.GetTile(_terrain.WorldToCell(direction.x < 0 ? targetBounds.BottomLeft : targetBounds.BottomRight));
+
+                if (upper != null)
+                {
+                    // TODO: Reduce distance to prevent collision
+                }
+                else if (lower != null)
+                {
+                    
+                }
+                
+                if(_terrain.HasTile(_terrain.WorldToCell(targetBounds.)) || _terrain.HasTile(_terrain.WorldToCell(targetFeet)))
                 {
                     target.x = Mathf.RoundToInt(target.x);
                     target.x -= playerWidthOffset;
@@ -102,18 +117,12 @@ namespace DwarfGame
         
         private bool HasHitCeiling()
         {
-            Vector3 right = transform.position + new Vector3(PlayerVars.PlayerWidth, PlayerVars.PlayerHeightFromCenter, 0);
-            Vector3 left = transform.position + new Vector3(-PlayerVars.PlayerWidth, PlayerVars.PlayerHeightFromCenter, 0);
-    
-            return _terrain.HasTile(_terrain.WorldToCell(right)) || _terrain.HasTile(_terrain.WorldToCell(left));
+            return _terrain.HasTile(_terrain.WorldToCell(Bounds.TopLeft)) || _terrain.HasTile(_terrain.WorldToCell(Bounds.TopRight));
         }
     
-        private void CheckGround()
+        private bool IsFalling()
         {
-            Vector3 right = transform.position + new Vector3(PlayerVars.PlayerWidth, -0.55f, 0);
-            Vector3 left = transform.position + new Vector3(-PlayerVars.PlayerWidth, -0.55f, 0);
-            
-            _isFalling = !_terrain.HasTile(_terrain.WorldToCell(right)) && !_terrain.HasTile(_terrain.WorldToCell(left));
+            return !_terrain.HasTile(_terrain.WorldToCell(Bounds.BottomLeft)) && !_terrain.HasTile(_terrain.WorldToCell(Bounds.BottomRight));
         }
     }
 

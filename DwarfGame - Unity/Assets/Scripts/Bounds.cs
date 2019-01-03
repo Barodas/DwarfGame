@@ -18,6 +18,11 @@ namespace DwarfGame
         public float Top => Center.y + Extents.y;
         public float Bottom => Center.y - Extents.y;
 
+        public Vector2 TopLeft => new Vector2(Left, Top);
+        public Vector2 TopRight => new Vector2(Right, Top);
+        public Vector2 BottomLeft => new Vector2(Left, Bottom);
+        public Vector2 BottomRight => new Vector2(Right, Bottom);
+        
         public Bounds(Vector2 center, Vector2 size)
         {
             Center = center;

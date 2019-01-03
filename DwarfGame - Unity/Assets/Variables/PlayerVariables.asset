@@ -22,4 +22,5 @@ MonoBehaviour:
   - 1
   JumpHeightCurModifier: 0
   PlayerWidth: 0.4
+  PlayerHeightFromCenter: 0.4
   FallSpeedBase: 0.07
