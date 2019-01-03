@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.Tilemaps;
 
 public class PlayerController : MonoBehaviour
@@ -45,6 +46,8 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
+                
+                
                 if (Input.GetKey(KeyCode.Space))
                 {
                     _targetJumpHeight = transform.position.y + (PlayerVars.JumpHeightBase * PlayerVars.JumpHeightModifier[PlayerVars.JumpHeightCurModifier]) + 0.2f;
@@ -53,16 +56,20 @@ public class PlayerController : MonoBehaviour
             }
         }
         
-
         float input = Input.GetAxisRaw("Horizontal");
         if (input != 0)
         {
             Vector3 direction = Vector3.right * input * (PlayerVars.MoveSpeedBase * PlayerVars.MovespeedMultiplier[PlayerVars.MoveSpeedCurModifier]);
             Vector3 target = transform.position + direction;
-            float playerWidthOffset = target.x > 0 ? PlayerVars.PlayerWidth + 0.01f : -PlayerVars.PlayerWidth - 0.01f;
+            float playerWidthOffset = direction.x > 0 ? PlayerVars.PlayerWidth + 0.01f : -PlayerVars.PlayerWidth - 0.01f;
             target.x += playerWidthOffset;
 
-            if(_terrain.HasTile(_terrain.WorldToCell(target)))
+            Vector3 targetHead;
+            Vector3 targetFeet = targetHead = target;
+            targetHead.y += PlayerVars.PlayerHeightFromCenter;
+            targetFeet.y -= 0.49f;
+
+            if(_terrain.HasTile(_terrain.WorldToCell(targetHead)) || _terrain.HasTile(_terrain.WorldToCell(targetFeet)))
             {
                 target.x = Mathf.RoundToInt(target.x);
                 target.x -= playerWidthOffset;
@@ -72,9 +79,7 @@ public class PlayerController : MonoBehaviour
 
             transform.Translate(direction);
         }
-
         
-
         if(Input.GetMouseButtonDown(0))
         {
             TilemapManager.Instance.TerrainTilemap.SetTile(TilemapManager.Instance.TerrainTilemap.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition)), null);
@@ -95,7 +100,7 @@ public class PlayerController : MonoBehaviour
             BodySprite.transform.localScale = new Vector3(1, 1, 1);
         }
     }
-
+    
     private bool HasHitCeiling()
     {
         Vector3 right = transform.position + new Vector3(PlayerVars.PlayerWidth, PlayerVars.PlayerHeightFromCenter, 0);
@@ -108,7 +113,7 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 right = transform.position + new Vector3(PlayerVars.PlayerWidth, -0.55f, 0);
         Vector3 left = transform.position + new Vector3(-PlayerVars.PlayerWidth, -0.55f, 0);
-
+        
         _isFalling = !_terrain.HasTile(_terrain.WorldToCell(right)) && !_terrain.HasTile(_terrain.WorldToCell(left));
     }
 }
