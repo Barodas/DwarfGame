@@ -1,23 +1,26 @@
 ﻿using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class TilemapManager : MonoBehaviour
+namespace DwarfGame
 {
-    public static TilemapManager Instance { get; private set; }
-
-    public Tilemap TerrainTilemap;
-    public Tilemap TerrainBackgroundTilemap;
-
-    void Awake()
+    public class TilemapManager : MonoBehaviour
     {
-        if(Instance == null)
+        public static TilemapManager Instance { get; private set; }
+
+        public Tilemap TerrainTilemap;
+        public Tilemap TerrainBackgroundTilemap;
+
+        void Awake()
         {
-            Instance = this;
+            if(Instance == null)
+            {
+                Instance = this;
+            }
         }
-    }
 
-    void Update()
-    {
+        void Update()
+        {
         
+        }
     }
 }
