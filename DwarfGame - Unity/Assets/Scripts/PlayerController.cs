@@ -53,8 +53,19 @@ namespace DwarfGame
                 }
                 else
                 {
-                    
-                    
+                    float groundOffset = 0;
+                    if (_terrain.HasTile(_terrain.WorldToCell(Bounds.BottomLeft)))
+                    {
+                        float tileCenter = Mathf.Round(Bounds.BottomLeft.y);
+                        groundOffset = (tileCenter + 0.5f + Bounds.Extents.y) - Bounds.Center.y;
+                    }
+                    else if(_terrain.HasTile(_terrain.WorldToCell(Bounds.BottomRight)))
+                    {
+                        float tileCenter = Mathf.Round(Bounds.BottomRight.y);
+                        groundOffset = (tileCenter + 0.5f + Bounds.Extents.y) - Bounds.Center.y;
+                    }
+                    transform.Translate(new Vector2(0, groundOffset));
+
                     if (Input.GetKey(KeyCode.Space))
                     {
                         _targetJumpHeight = transform.position.y + (PlayerVars.JumpHeightBase * PlayerVars.JumpHeightModifier[PlayerVars.JumpHeightCurModifier]) + 0.2f;
@@ -70,27 +81,34 @@ namespace DwarfGame
                 Vector2 direction = Vector2.right * input * (PlayerVars.MoveSpeedBase * PlayerVars.MovespeedMultiplier[PlayerVars.MoveSpeedCurModifier]);
                 targetBounds.Center += direction;
 
-                TileBase upper, lower;
-                upper = _terrain.GetTile(_terrain.WorldToCell(direction.x < 0 ? targetBounds.TopLeft : targetBounds.TopRight));
-                lower = _terrain.GetTile(_terrain.WorldToCell(direction.x < 0 ? targetBounds.BottomLeft : targetBounds.BottomRight));
+                // TODO: figure out how to access the tiles position from within the tile.
+                if (_terrain.HasTile(_terrain.WorldToCell(direction.x < 0 ? targetBounds.TopLeft : targetBounds.TopRight)))
+                {
+                    float tileCenter = Mathf.Round(direction.x < 0 ? targetBounds.TopLeft.x : targetBounds.TopRight.x);
 
-                if (upper != null)
-                {
-                    // TODO: Reduce distance to prevent collision
+                    if(direction.x < 0)
+                    {
+                        direction.x = tileCenter + 0.5f + Bounds.Extents.x;
+                    }
+                    else
+                    {
+                        direction.x = tileCenter - 0.5f - Bounds.Extents.x;
+                    }
                 }
-                else if (lower != null)
+                else if (_terrain.HasTile(_terrain.WorldToCell(direction.x < 0 ? targetBounds.BottomLeft : targetBounds.BottomRight)))
                 {
-                    
+                    float tileCenter = Mathf.Round(direction.x < 0 ? targetBounds.BottomLeft.x : targetBounds.BottomRight.x);
+
+                    if (direction.x < 0)
+                    {
+                        direction.x = tileCenter + 0.5f + Bounds.Extents.x;
+                    }
+                    else
+                    {
+                        direction.x = tileCenter - 0.5f - Bounds.Extents.x;
+                    }
                 }
-                
-                if(_terrain.HasTile(_terrain.WorldToCell(targetBounds.)) || _terrain.HasTile(_terrain.WorldToCell(targetFeet)))
-                {
-                    target.x = Mathf.RoundToInt(target.x);
-                    target.x -= playerWidthOffset;
-    
-                    direction = target - transform.position;
-                }
-    
+
                 transform.Translate(direction);
             }
             
