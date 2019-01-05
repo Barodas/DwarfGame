@@ -23,6 +23,12 @@ namespace DwarfGame
         public Vector2 BottomLeft => new Vector2(Left, Bottom);
         public Vector2 BottomRight => new Vector2(Right, Bottom);
         
+        public Bounds(Bounds bounds)
+        {
+            Center = bounds.Center;
+            Size = bounds.Size;
+        }
+
         public Bounds(Vector2 center, Vector2 size)
         {
             Center = center;

@@ -9,7 +9,8 @@ namespace DwarfGame
         public GameObject BodySprite;
         
         private Tilemap _terrain;
-    
+
+        private bool _isFalling;
         private bool _isJumping;
     
         private float _targetJumpHeight;
@@ -49,23 +50,24 @@ namespace DwarfGame
             {
                 if (IsFalling())
                 {
-                    transform.Translate(Vector3.down * PlayerVars.FallSpeedBase);
+                    Vector2 direction = Vector2.down * PlayerVars.FallSpeedBase;
+                    Bounds targetBounds = new Bounds(Bounds);
+                    targetBounds.Center += direction;
+                    if (_terrain.HasTile(_terrain.WorldToCell(targetBounds.BottomLeft)))
+                    {
+                        float tileCenter = Mathf.Round(targetBounds.BottomLeft.y);
+                        direction.y = (tileCenter + 0.5f + targetBounds.Extents.y) - targetBounds.Center.y;
+                    }
+                    else if (_terrain.HasTile(_terrain.WorldToCell(targetBounds.BottomRight)))
+                    {
+                        float tileCenter = Mathf.Round(targetBounds.BottomRight.y);
+                        direction.y = (tileCenter + 0.5f + targetBounds.Extents.y) - targetBounds.Center.y;
+                    }
+
+                    transform.Translate(direction);
                 }
                 else
                 {
-                    float groundOffset = 0;
-                    if (_terrain.HasTile(_terrain.WorldToCell(Bounds.BottomLeft)))
-                    {
-                        float tileCenter = Mathf.Round(Bounds.BottomLeft.y);
-                        groundOffset = (tileCenter + 0.5f + Bounds.Extents.y) - Bounds.Center.y;
-                    }
-                    else if(_terrain.HasTile(_terrain.WorldToCell(Bounds.BottomRight)))
-                    {
-                        float tileCenter = Mathf.Round(Bounds.BottomRight.y);
-                        groundOffset = (tileCenter + 0.5f + Bounds.Extents.y) - Bounds.Center.y;
-                    }
-                    transform.Translate(new Vector2(0, groundOffset));
-
                     if (Input.GetKey(KeyCode.Space))
                     {
                         _targetJumpHeight = transform.position.y + (PlayerVars.JumpHeightBase * PlayerVars.JumpHeightModifier[PlayerVars.JumpHeightCurModifier]) + 0.2f;
@@ -140,7 +142,8 @@ namespace DwarfGame
     
         private bool IsFalling()
         {
-            return !_terrain.HasTile(_terrain.WorldToCell(Bounds.BottomLeft)) && !_terrain.HasTile(_terrain.WorldToCell(Bounds.BottomRight));
+            Vector2 fallingThreshold = Vector2.down * 0.01f;
+            return !_terrain.HasTile(_terrain.WorldToCell(Bounds.BottomLeft + fallingThreshold)) && !_terrain.HasTile(_terrain.WorldToCell(Bounds.BottomRight + fallingThreshold));
         }
     }
 
