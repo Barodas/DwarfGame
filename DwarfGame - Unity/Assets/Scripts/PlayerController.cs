@@ -79,36 +79,20 @@ namespace DwarfGame
             float input = Input.GetAxisRaw("Horizontal");
             if (input != 0)
             {
-                Bounds targetBounds = Bounds;
+                // TODO: figure out how to access the tiles position from within the tile.
+                Bounds targetBounds = new Bounds(Bounds);
                 Vector2 direction = Vector2.right * input * (PlayerVars.MoveSpeedBase * PlayerVars.MovespeedMultiplier[PlayerVars.MoveSpeedCurModifier]);
                 targetBounds.Center += direction;
 
-                // TODO: figure out how to access the tiles position from within the tile.
-                if (_terrain.HasTile(_terrain.WorldToCell(direction.x < 0 ? targetBounds.TopLeft : targetBounds.TopRight)))
+                if(_terrain.HasTile(_terrain.WorldToCell(targetBounds.TopRight)) || _terrain.HasTile(_terrain.WorldToCell(targetBounds.BottomRight)))
                 {
-                    float tileCenter = Mathf.Round(direction.x < 0 ? targetBounds.TopLeft.x : targetBounds.TopRight.x);
-
-                    if(direction.x < 0)
-                    {
-                        direction.x = tileCenter + 0.5f + Bounds.Extents.x;
-                    }
-                    else
-                    {
-                        direction.x = tileCenter - 0.5f - Bounds.Extents.x;
-                    }
+                    float tileCenter = (float)System.Math.Round(targetBounds.Right, System.MidpointRounding.AwayFromZero);
+                    direction.x = (tileCenter - 0.5f - targetBounds.Extents.x) - targetBounds.Center.x;
                 }
-                else if (_terrain.HasTile(_terrain.WorldToCell(direction.x < 0 ? targetBounds.BottomLeft : targetBounds.BottomRight)))
+                else if(_terrain.HasTile(_terrain.WorldToCell(targetBounds.TopLeft)) || _terrain.HasTile(_terrain.WorldToCell(targetBounds.BottomLeft)))
                 {
-                    float tileCenter = Mathf.Round(direction.x < 0 ? targetBounds.BottomLeft.x : targetBounds.BottomRight.x);
-
-                    if (direction.x < 0)
-                    {
-                        direction.x = tileCenter + 0.5f + Bounds.Extents.x;
-                    }
-                    else
-                    {
-                        direction.x = tileCenter - 0.5f - Bounds.Extents.x;
-                    }
+                    float tileCenter = (float)System.Math.Round(targetBounds.Left, System.MidpointRounding.AwayFromZero);
+                    direction.x = (tileCenter + 0.5f + targetBounds.Extents.x) - targetBounds.Center.x;
                 }
 
                 transform.Translate(direction);
