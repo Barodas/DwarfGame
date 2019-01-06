@@ -40,27 +40,57 @@ namespace DwarfGame
     
         private void Update()
         {
-            //if(_isJumping)
-            //{
-            //    if(transform.position.y >= _targetJumpHeight || HasHitCeiling())
-            //    {
-            //        _isJumping = false;
-            //    }
-            //    else
-            //    {
-            //        _rb.velocity = new Vector2(_rb.velocity.x, PlayerVars.JumpSpeedBase);
-            //    }
-            //}
-            //else
-            //{
-            //    _rb.velocity = new Vector2(_rb.velocity.x, -PlayerVars.FallSpeedBase);
-            //
-            //    if (Input.GetKey(KeyCode.Space))
-            //    {
-            //        _targetJumpHeight = transform.position.y + (PlayerVars.JumpHeightBase * PlayerVars.JumpHeightModifier[PlayerVars.JumpHeightCurModifier]) + 0.2f;
-            //        _isJumping = true;
-            //    }
-            //}
+            if(_isJumping)
+            {
+                //if(transform.position.y >= _targetJumpHeight || HasHitCeiling())
+                //{
+                //    _isJumping = false;
+                //}
+                //else
+                //{
+                //    _rb.velocity = new Vector2(_rb.velocity.x, PlayerVars.JumpSpeedBase);
+                //}
+            }
+            else
+            {
+                // TODO: Why does this block of code invert left/right controls and character speed???
+                float distance = PlayerVars.FallSpeedBase;
+                float rayDistance = distance + _col.bounds.extents.y;
+                
+                Vector2 center = _col.bounds.center;
+                Vector2 left = new Vector2(center.x - _col.bounds.extents.x, center.y);
+                Vector2 right = new Vector2(center.x + _col.bounds.extents.x, center.y);
+                
+                RaycastHit2D[] hits = new RaycastHit2D[3];
+                hits[0] = Physics2D.Raycast(left, Vector2.down, rayDistance, CollisionMask);
+                hits[1] = Physics2D.Raycast(center, Vector2.down, rayDistance, CollisionMask);
+                hits[2] = Physics2D.Raycast(right, Vector2.down, rayDistance, CollisionMask);
+                
+                float hitDistance = rayDistance + 1f;
+                foreach (RaycastHit2D hit in hits)
+                {
+                    if (hit.collider != null)
+                    {
+                        hitDistance = hit.distance < hitDistance ? hit.distance : hitDistance;
+                    }
+                }
+                
+                if (hitDistance < rayDistance)
+                {
+                    distance = hitDistance - _col.bounds.extents.y;
+                }
+
+                if (distance > 0)
+                {
+                    transform.Translate(Vector3.down * distance);   
+                }
+                
+                if (Input.GetKey(KeyCode.Space))
+                {
+                    _targetJumpHeight = transform.position.y + (PlayerVars.JumpHeightBase * PlayerVars.JumpHeightModifier[PlayerVars.JumpHeightCurModifier]) + 0.2f;
+                    _isJumping = true;
+                }
+            }
             
             float input = Input.GetAxisRaw("Horizontal");
             if (input != 0)
