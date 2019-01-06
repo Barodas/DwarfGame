@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7210a03ad050e64fbf5d7f9ab66a85a, type: 3}
   m_Name: PlayerVariables
   m_EditorClassIdentifier: 
-  MoveSpeedBase: 2.7
+  MoveSpeedBase: 0.07
   MovespeedMultiplier:
   - 1
   MoveSpeedCurModifier: 0
-  JumpSpeedBase: 3
+  JumpSpeedBase: 0.08
   JumpHeightBase: 1
   JumpHeightModifier:
   - 1
   JumpHeightCurModifier: 0
   PlayerWidth: 0.4
   PlayerHeightFromCenter: 0.4
-  FallSpeedBase: 2.7
+  FallSpeedBase: 0.07
