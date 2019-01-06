@@ -9,6 +9,8 @@ namespace DwarfGame
         public GameObject BodySprite;
         
         private Tilemap _terrain;
+        private Rigidbody2D _rb;
+        private BoxCollider2D _col;
 
         private bool _isFalling;
         private bool _isJumping;
@@ -31,10 +33,12 @@ namespace DwarfGame
         {
             _terrain = TilemapManager.Instance.TerrainTilemap;
             Bounds = new Bounds(transform.position);
+            _rb = GetComponent<Rigidbody2D>();
+            _col = GetComponent<BoxCollider2D>();
         }
     
         private void Update()
-        { 
+        {
             if(_isJumping)
             {
                 if(transform.position.y >= _targetJumpHeight || HasHitCeiling())
@@ -43,36 +47,17 @@ namespace DwarfGame
                 }
                 else
                 {
-                    transform.Translate(Vector3.up * PlayerVars.JumpSpeedBase);
+                    _rb.velocity = new Vector2(_rb.velocity.x, PlayerVars.JumpSpeedBase);
                 }
             }
             else
             {
-                if (IsFalling())
+                _rb.velocity = new Vector2(_rb.velocity.x, -PlayerVars.FallSpeedBase);
+            
+                if (Input.GetKey(KeyCode.Space))
                 {
-                    Vector2 direction = Vector2.down * PlayerVars.FallSpeedBase;
-                    Bounds targetBounds = new Bounds(Bounds);
-                    targetBounds.Center += direction;
-                    if (_terrain.HasTile(_terrain.WorldToCell(targetBounds.BottomLeft)))
-                    {
-                        float tileCenter = Mathf.Round(targetBounds.BottomLeft.y);
-                        direction.y = (tileCenter + 0.5f + targetBounds.Extents.y) - targetBounds.Center.y;
-                    }
-                    else if (_terrain.HasTile(_terrain.WorldToCell(targetBounds.BottomRight)))
-                    {
-                        float tileCenter = Mathf.Round(targetBounds.BottomRight.y);
-                        direction.y = (tileCenter + 0.5f + targetBounds.Extents.y) - targetBounds.Center.y;
-                    }
-
-                    transform.Translate(direction);
-                }
-                else
-                {
-                    if (Input.GetKey(KeyCode.Space))
-                    {
-                        _targetJumpHeight = transform.position.y + (PlayerVars.JumpHeightBase * PlayerVars.JumpHeightModifier[PlayerVars.JumpHeightCurModifier]) + 0.2f;
-                        _isJumping = true;
-                    }
+                    _targetJumpHeight = transform.position.y + (PlayerVars.JumpHeightBase * PlayerVars.JumpHeightModifier[PlayerVars.JumpHeightCurModifier]) + 0.2f;
+                    _isJumping = true;
                 }
             }
             
@@ -80,22 +65,11 @@ namespace DwarfGame
             if (input != 0)
             {
                 // TODO: figure out how to access the tiles position from within the tile.
-                Bounds targetBounds = new Bounds(Bounds);
-                Vector2 direction = Vector2.right * input * (PlayerVars.MoveSpeedBase * PlayerVars.MovespeedMultiplier[PlayerVars.MoveSpeedCurModifier]);
-                targetBounds.Center += direction;
-
-                if(_terrain.HasTile(_terrain.WorldToCell(targetBounds.TopRight)) || _terrain.HasTile(_terrain.WorldToCell(targetBounds.BottomRight)))
-                {
-                    float tileCenter = (float)System.Math.Round(targetBounds.Right, System.MidpointRounding.AwayFromZero);
-                    direction.x = (tileCenter - 0.5f - targetBounds.Extents.x) - targetBounds.Center.x;
-                }
-                else if(_terrain.HasTile(_terrain.WorldToCell(targetBounds.TopLeft)) || _terrain.HasTile(_terrain.WorldToCell(targetBounds.BottomLeft)))
-                {
-                    float tileCenter = (float)System.Math.Round(targetBounds.Left, System.MidpointRounding.AwayFromZero);
-                    direction.x = (tileCenter + 0.5f + targetBounds.Extents.x) - targetBounds.Center.x;
-                }
-
-                transform.Translate(direction);
+                _rb.velocity = new Vector2(input * (PlayerVars.MoveSpeedBase * PlayerVars.MovespeedMultiplier[PlayerVars.MoveSpeedCurModifier]), _rb.velocity.y);
+            }
+            else
+            {
+                _rb.velocity = new Vector2(0, _rb.velocity.y);
             }
             
             if(Input.GetMouseButtonDown(0))
