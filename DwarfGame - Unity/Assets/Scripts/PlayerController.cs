@@ -1,6 +1,4 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.Experimental.PlayerLoop;
+﻿using UnityEngine;
 using UnityEngine.Tilemaps;
 
 namespace DwarfGame
@@ -103,6 +101,7 @@ namespace DwarfGame
 
         private void FixedUpdate()
         {
+            // Vertical state
             switch (State)
             {
                 case VerticalState.Grounded:
@@ -171,67 +170,22 @@ namespace DwarfGame
                     break;
             }
 
+            // Horizontal state
             if (_moveInput != 0)
             {
-                float distance = PlayerVars.MoveSpeedBase;
-                if (_moveInput > 0)
-                {
-                    float rayDistance = distance + _col.bounds.extents.x;
+                float distance = PlayerVars.MoveSpeedBase + _col.bounds.extents.x;
+                Vector2 direction = _moveInput > 0 ? Vector2.right : Vector2.left;
 
-                    Vector2 center = _col.bounds.center;
-                    Vector2 upper = new Vector2(center.x, center.y + _col.bounds.extents.y - EdgeRayOffset);
-                    Vector2 lower = new Vector2(center.x, center.y - _col.bounds.extents.y + EdgeRayOffset);
-
-                    RaycastHit2D[] hits = new RaycastHit2D[3];
-                    hits[0] = Raycast(upper, Vector2.right, rayDistance, CollisionMask, Color.cyan);
-                    hits[1] = Raycast(center, Vector2.right, rayDistance, CollisionMask, Color.cyan);
-                    hits[2] = Raycast(lower, Vector2.right, rayDistance, CollisionMask, Color.cyan);
-
-                    float hitDistance = rayDistance + 1f;
-                    foreach (RaycastHit2D hit in hits)
+                distance = MultiRaycast(direction, distance,
+                    new Vector2[]
                     {
-                        if (hit.collider != null && hit.distance > 0)
-                        {
-                            hitDistance = hit.distance < hitDistance ? hit.distance : hitDistance;
-                        }
-                    }
+                        new Vector2(_col.bounds.center.x, _col.bounds.center.y + _col.bounds.extents.y - EdgeRayOffset),
+                        _col.bounds.center,
+                        new Vector2(_col.bounds.center.x, _col.bounds.center.y - _col.bounds.extents.y + EdgeRayOffset),
+                    });
+                distance -= _col.bounds.extents.x;
 
-                    if (hitDistance < rayDistance)
-                    {
-                        distance = hitDistance - _col.bounds.extents.x;
-                    }
-                }
-                else
-                {
-                    float rayDistance = distance + _col.bounds.extents.x;
-
-                    Vector2 center = _col.bounds.center;
-                    Vector2 upper = new Vector2(center.x, center.y + _col.bounds.extents.y - EdgeRayOffset);
-                    Vector2 lower = new Vector2(center.x, center.y - _col.bounds.extents.y + EdgeRayOffset);
-
-                    RaycastHit2D[] hits = new RaycastHit2D[3];
-                    hits[0] = Raycast(upper, Vector2.left, rayDistance, CollisionMask, Color.cyan);
-                    hits[1] = Raycast(center, Vector2.left, rayDistance, CollisionMask, Color.cyan);
-                    hits[2] = Raycast(lower, Vector2.left, rayDistance, CollisionMask, Color.cyan);
-
-                    float hitDistance = rayDistance + 1f;
-                    foreach (RaycastHit2D hit in hits)
-                    {
-                        if (hit.collider != null && hit.distance > 0) // 0 distance removes hits on edges of our collider
-                        {
-                            hitDistance = hit.distance < hitDistance ? hit.distance : hitDistance;
-                        }
-                    }
-
-                    if (hitDistance < rayDistance)
-                    {
-                        distance = hitDistance - _col.bounds.extents.x;
-                    }
-
-                    distance = -distance;
-                }
-
-                transform.Translate(Vector3.right * distance);
+                transform.Translate(direction * distance);
             }
         }
 
