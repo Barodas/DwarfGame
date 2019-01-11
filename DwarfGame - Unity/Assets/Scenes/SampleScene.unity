@@ -205,7 +205,7 @@ GameObject:
   - component: {fileID: 570703729}
   - component: {fileID: 570703731}
   - component: {fileID: 570703730}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TerrainBackTilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -262,7 +262,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
   m_MaxChunkCount: 16
@@ -9845,9 +9845,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 929802773}
+  - component: {fileID: 929802774}
   - component: {fileID: 929802772}
   - component: {fileID: 929802771}
-  - component: {fileID: 929802774}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -9855,8 +9855,8 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!58 &929802771
-CircleCollider2D:
+--- !u!61 &929802771
+BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -9868,9 +9868,19 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.05}
+  m_Offset: {x: 0, y: -0.1}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
   serializedVersion: 2
-  m_Radius: 0.45
+  m_Size: {x: 0.6, y: 0.8}
+  m_EdgeRadius: 0
 --- !u!50 &929802772
 Rigidbody2D:
   serializedVersion: 4
@@ -9879,19 +9889,19 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 929802770}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 7
 --- !u!4 &929802773
 Transform:
   m_ObjectHideFlags: 0
@@ -9921,6 +9931,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerVars: {fileID: 11400000, guid: 9de64e06a03c53a46b8b5381a0d6bb7f, type: 2}
   BodySprite: {fileID: 1973543971}
+  CollisionMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &1085319846
 GameObject:
   m_ObjectHideFlags: 0
@@ -9933,7 +9946,7 @@ GameObject:
   - component: {fileID: 1085319850}
   - component: {fileID: 1085319849}
   - component: {fileID: 1085319848}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TerrainTilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19516,7 +19529,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 2218c4cf2ff68124a94c2580dd0c55d4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
