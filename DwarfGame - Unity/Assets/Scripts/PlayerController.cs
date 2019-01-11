@@ -1,11 +1,21 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Experimental.PlayerLoop;
 using UnityEngine.Tilemaps;
 
 namespace DwarfGame
 {
+    public enum VerticalState
+    {
+        Grounded,
+        Jumping,
+        Falling
+    };
+    
     public class PlayerController : MonoBehaviour
     {
+        private const float EdgeRayOffset = 0.001f;
+        
         public PlayerVariables PlayerVars;
         public GameObject BodySprite;
         public LayerMask CollisionMask;
@@ -14,8 +24,17 @@ namespace DwarfGame
         private Rigidbody2D _rb;
         private BoxCollider2D _col;
 
-        private bool _isFalling;
-        private bool _isJumping;
+        private VerticalState _verticalState = VerticalState.Grounded;
+
+        private VerticalState State
+        {
+            get { return _verticalState; }
+            set
+            {
+                _verticalState = value;
+                Debug.LogFormat("State changed to {0}", value);
+            }
+        }
     
         private float _targetJumpHeight;
 
@@ -42,21 +61,34 @@ namespace DwarfGame
     
         private void Update()
         {
-            if(_isJumping)
+            switch (State)
             {
-                
+                case VerticalState.Grounded:
+                    if (Input.GetKey(KeyCode.Space))
+                    {
+                        _targetJumpHeight = _col.bounds.center.y + _col.bounds.extents.y + (PlayerVars.JumpHeightBase * PlayerVars.JumpHeightModifier[PlayerVars.JumpHeightCurModifier]) + 0.2f;
+                        State = VerticalState.Jumping;
+                    }
+                    break;
+                case VerticalState.Jumping:
+                    break;
+                case VerticalState.Falling:
+                    break;
             }
-            else
-            {
-                if (Input.GetKey(KeyCode.Space)) // TODO: Only allow jumping when grounded
-                {
-                    _targetJumpHeight = transform.position.y + (PlayerVars.JumpHeightBase * PlayerVars.JumpHeightModifier[PlayerVars.JumpHeightCurModifier]) + 0.2f;
-                    _isJumping = true;
-                }
-            }
-            
+    
             _moveInput = Input.GetAxisRaw("Horizontal");
             
+            if(_moveInput < 0)
+            {
+                BodySprite.transform.localScale = new Vector3(-1, 1, 1);
+            }
+            else if(_moveInput > 0)
+            {
+                BodySprite.transform.localScale = new Vector3(1, 1, 1);
+            }
+            
+            
+            // Block removal test code
             if(Input.GetMouseButtonDown(0))
             {
                 TilemapManager.Instance.TerrainTilemap.SetTile(TilemapManager.Instance.TerrainTilemap.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition)), null);
@@ -67,62 +99,76 @@ namespace DwarfGame
                 //    Debug.Log(tile.name);
                 //}
             }
-    
-            if(_moveInput < 0)
-            {
-                BodySprite.transform.localScale = new Vector3(-1, 1, 1);
-            }
-            else if(_moveInput > 0)
-            {
-                BodySprite.transform.localScale = new Vector3(1, 1, 1);
-            }
         }
 
         private void FixedUpdate()
         {
-            if(_isJumping)
+            switch (State)
             {
-                if(transform.position.y >= _targetJumpHeight || HasHitCeiling())
+                case VerticalState.Grounded:
                 {
-                    _isJumping = false;
-                }
-                else
-                {
-                    transform.Translate(Vector3.up * PlayerVars.JumpSpeedBase);
-                }
-            }
-            else
-            {
-                float distance = PlayerVars.FallSpeedBase;
-                float rayDistance = distance + _col.bounds.extents.y;
-                
-                Vector2 center = _col.bounds.center;
-                Vector2 left = new Vector2(center.x - _col.bounds.extents.x, center.y);
-                Vector2 right = new Vector2(center.x + _col.bounds.extents.x, center.y);
-                
-                RaycastHit2D[] hits = new RaycastHit2D[3];
-                hits[0] = Raycast(left, Vector2.down, rayDistance, CollisionMask, Color.blue);
-                hits[1] = Raycast(center, Vector2.down, rayDistance, CollisionMask, Color.blue);
-                hits[2] = Raycast(right, Vector2.down, rayDistance, CollisionMask, Color.blue);
-                
-                float hitDistance = rayDistance + 1f;
-                foreach (RaycastHit2D hit in hits)
-                {
-                    if (hit.collider != null && hit.distance > 0) // 0 distance removes hits on edges of our collider
+                    // Check if we should be falling 
+                    float groundDistance = MultiRaycast(Vector2.down, PlayerVars.FallSpeedBase + _col.bounds.extents.y,
+                        new Vector2[]
+                        {
+                            new Vector2(_col.bounds.center.x - _col.bounds.extents.x + EdgeRayOffset, _col.bounds.center.y),
+                            _col.bounds.center,
+                            new Vector2(_col.bounds.center.x + _col.bounds.extents.x - EdgeRayOffset, _col.bounds.center.y)
+                        });
+                    if (groundDistance - _col.bounds.extents.y > 0)
                     {
-                        hitDistance = hit.distance < hitDistance ? hit.distance : hitDistance;
+                        State = VerticalState.Falling;
                     }
+                    break;
                 }
-                
-                if (hitDistance < rayDistance)
-                {
-                    distance = hitDistance - _col.bounds.extents.y;
-                }
-            
-                if (distance > 0)
-                {
-                    transform.Translate(Vector3.down * distance);   
-                }
+                case VerticalState.Jumping:
+                    // Clamp distance to targetHeight
+                    float targetDistance = PlayerVars.JumpSpeedBase + _col.bounds.extents.y;
+                    bool reachedPeak = false;
+                    if (_col.bounds.center.y + targetDistance >= _targetJumpHeight)
+                    {
+                        targetDistance = _targetJumpHeight - _col.bounds.center.y;
+                        reachedPeak = true;
+                    }
+                    // Check for collision if return from raycasts is lower than targetdistance we must have hit something, set falling
+                    float jumpDistance = MultiRaycast(Vector2.up, targetDistance,
+                        new Vector2[]
+                        {
+                            new Vector2(_col.bounds.center.x - _col.bounds.extents.x + EdgeRayOffset, _col.bounds.center.y),
+                            _col.bounds.center,
+                            new Vector2(_col.bounds.center.x + _col.bounds.extents.x - EdgeRayOffset, _col.bounds.center.y)
+                        });
+                    // Change state to falling 
+                    if (jumpDistance < targetDistance || reachedPeak)
+                    {
+                        State = VerticalState.Falling;
+                    }
+                    // apply jumpDistance
+                    jumpDistance -= _col.bounds.extents.y;
+                    if (jumpDistance > 0)
+                    {
+                        transform.Translate(Vector2.up * jumpDistance);
+                    }
+                    break;
+                case VerticalState.Falling:
+                    float fallingDistance = MultiRaycast(Vector2.down, PlayerVars.FallSpeedBase + _col.bounds.extents.y,
+                        new Vector2[]
+                        {
+                            new Vector2(_col.bounds.center.x - _col.bounds.extents.x + EdgeRayOffset, _col.bounds.center.y),
+                            _col.bounds.center,
+                            new Vector2(_col.bounds.center.x + _col.bounds.extents.x - EdgeRayOffset, _col.bounds.center.y)
+                        });
+                    fallingDistance -= _col.bounds.extents.y;
+                    if (fallingDistance >= 0.001f)
+                    {
+                        transform.Translate(Vector2.down * fallingDistance);
+                    }
+                    else
+                    {
+                        // If we have stopped falling, change state to Grounded
+                        State = VerticalState.Grounded;
+                    }
+                    break;
             }
 
             if (_moveInput != 0)
@@ -133,8 +179,8 @@ namespace DwarfGame
                     float rayDistance = distance + _col.bounds.extents.x;
 
                     Vector2 center = _col.bounds.center;
-                    Vector2 upper = new Vector2(center.x, center.y + _col.bounds.extents.y);
-                    Vector2 lower = new Vector2(center.x, center.y - _col.bounds.extents.y);
+                    Vector2 upper = new Vector2(center.x, center.y + _col.bounds.extents.y - EdgeRayOffset);
+                    Vector2 lower = new Vector2(center.x, center.y - _col.bounds.extents.y + EdgeRayOffset);
 
                     RaycastHit2D[] hits = new RaycastHit2D[3];
                     hits[0] = Raycast(upper, Vector2.right, rayDistance, CollisionMask, Color.cyan);
@@ -144,7 +190,7 @@ namespace DwarfGame
                     float hitDistance = rayDistance + 1f;
                     foreach (RaycastHit2D hit in hits)
                     {
-                        if (hit.collider != null && hit.distance > 0) // TODO: Figure out how to handle raycasts on adjacent floor/wall
+                        if (hit.collider != null && hit.distance > 0)
                         {
                             hitDistance = hit.distance < hitDistance ? hit.distance : hitDistance;
                         }
@@ -160,8 +206,8 @@ namespace DwarfGame
                     float rayDistance = distance + _col.bounds.extents.x;
 
                     Vector2 center = _col.bounds.center;
-                    Vector2 upper = new Vector2(center.x, center.y + _col.bounds.extents.y);
-                    Vector2 lower = new Vector2(center.x, center.y - _col.bounds.extents.y);
+                    Vector2 upper = new Vector2(center.x, center.y + _col.bounds.extents.y - EdgeRayOffset);
+                    Vector2 lower = new Vector2(center.x, center.y - _col.bounds.extents.y + EdgeRayOffset);
 
                     RaycastHit2D[] hits = new RaycastHit2D[3];
                     hits[0] = Raycast(upper, Vector2.left, rayDistance, CollisionMask, Color.cyan);
@@ -188,16 +234,31 @@ namespace DwarfGame
                 transform.Translate(Vector3.right * distance);
             }
         }
-        
-        private bool HasHitCeiling()
+
+        private float MultiRaycast(Vector2 direction, float distance, Vector2[] rayOrigins)
         {
-            return _terrain.HasTile(_terrain.WorldToCell(Bounds.TopLeft)) || _terrain.HasTile(_terrain.WorldToCell(Bounds.TopRight));
-        }
-    
-        private bool IsFalling()
-        {
-            Vector2 fallingThreshold = Vector2.down * 0.01f;
-            return !_terrain.HasTile(_terrain.WorldToCell(Bounds.BottomLeft + fallingThreshold)) && !_terrain.HasTile(_terrain.WorldToCell(Bounds.BottomRight + fallingThreshold));
+            float rayDistance = distance;
+            RaycastHit2D[] hits = new RaycastHit2D[rayOrigins.Length];
+            for (int i = 0; i < rayOrigins.Length; i++)
+            {
+                hits[i] = Raycast(rayOrigins[i], direction, rayDistance, CollisionMask, Color.blue);
+            }
+
+            float hitDistance = rayDistance + 1f;
+            foreach (RaycastHit2D hit in hits)
+            {
+                if (hit.collider != null && hit.distance > 0) // 0 distance removes hits on edges of our collider
+                {
+                    hitDistance = hit.distance < hitDistance ? hit.distance : hitDistance;
+                }
+            }
+                
+            if (hitDistance < rayDistance)
+            {
+                distance = hitDistance;
+            }
+
+            return distance;
         }
 
         // TODO: Put this into a util class, add a bool for drawing rays
