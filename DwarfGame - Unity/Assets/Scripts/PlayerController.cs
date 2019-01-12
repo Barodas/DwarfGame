@@ -68,15 +68,11 @@ namespace DwarfGame
             // Block removal test code
             if(Input.GetMouseButtonDown(0))
             {
-                TileBasic tile = TilemapManager.Instance.TerrainTilemap.GetTile<TileBasic>(
+                TilemapManager.Instance.TerrainTilemap.DestroyTile(
                     TilemapManager.Instance.TerrainTilemap.WorldToCell(
                         Camera.main.ScreenToWorldPoint(Input.mousePosition)));
-                if (tile != null)
-                {
-                    
-                }
                 
-                TilemapManager.Instance.TerrainTilemap.SetTile(TilemapManager.Instance.TerrainTilemap.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition)), null);
+                //TilemapManager.Instance.TerrainTilemap.SetTile(TilemapManager.Instance.TerrainTilemap.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition)), null);
     
                 //TileBase tile = TilemapManager.Instance.TerrainTilemap.GetTile(TilemapManager.Instance.TerrainTilemap.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
                 //if (tile != null)

@@ -10,12 +10,6 @@ public class TileBasic : TileBase
 {
     private int _damage = 100;
     public Item Item;
-
-    // TODO: How should we handle destroying tiles? Should the tilemap be overridden to handle the creation of item version of tile before destroying?
-    public void DestroyTile()
-    {
-        
-    }
     
     public override void GetTileData(Vector3Int location, ITilemap tilemap, ref TileData tileData)
     {

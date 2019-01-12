@@ -5,24 +5,18 @@ namespace DwarfGame
     [RequireComponent(typeof(BoxCollider2D), typeof(SpriteRenderer))]
     public class WorldItem : MonoBehaviour
     {
+        private const string PrefabName = "WorldItemPrefab";
+        
         private BoxCollider2D _col;
         private SpriteRenderer _renderer;
+        
+        public Item Item;
 
-        [SerializeField]
-        private Item _item;
-        public Item Item
+        public static WorldItem CreateWorldItem(Item item, Vector3 position)
         {
-            get => _item;
-            set
-            {
-                _item = value;
-                _renderer.sprite = _item.ItemSprite;
-            }
-        }
-
-        public static WorldItem CreateWorldItem(Item item)
-        {
-            GameObject go = new GameObject(item.name, typeof(WorldItem));
+            GameObject go = Instantiate(Resources.Load(PrefabName)) as GameObject;
+            go.name = item.name;
+            go.transform.position = position + new Vector3(0.5f, 0.5f, 0); // Offset to center of tile
             WorldItem worldItem = go.GetComponent<WorldItem>();
             worldItem.Item = item;
             return worldItem;
