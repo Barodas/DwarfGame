@@ -17,6 +17,7 @@ namespace DwarfGame
         public PlayerVariables PlayerVars;
         public GameObject BodySprite;
         public LayerMask CollisionMask;
+        public Inventory PlayerInventory;
 
         private Tilemap _terrain;
         private BoxCollider2D _col;
@@ -164,6 +165,15 @@ namespace DwarfGame
                 distance -= Extents.x;
 
                 transform.Translate(direction * distance);
+            }
+        }
+
+        private void OnTriggerStay2D(Collider2D other)
+        {
+            WorldItem worldItem = other.gameObject.GetComponent<WorldItem>();
+            if (worldItem != null)
+            {
+                worldItem.AddToInventory(PlayerInventory);
             }
         }
     }
