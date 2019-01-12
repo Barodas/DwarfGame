@@ -12,4 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb347131e5dee7049837b40307fcc413, type: 3}
   m_Name: PlayerInventory
   m_EditorClassIdentifier: 
-  InventorySize: 5
+  InventorySlotUpdated:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: DwarfGame.InventorySlotUpdateEvent, Assembly-CSharp, Version=0.0.0.0,
+      Culture=neutral, PublicKeyToken=null
+  ItemList:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

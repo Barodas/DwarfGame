@@ -1,21 +1,31 @@
 ﻿using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace DwarfGame
 {
     [CreateAssetMenu]
     public class Inventory : ScriptableObject
     {
-        public int InventorySize = 5;
-        public List<Item> ItemList;
-
+        public InventorySlotUpdateEvent InventorySlotUpdated;
+        public Item[] ItemList;
+        
+        private void Awake()
+        {
+            InventorySlotUpdated = new InventorySlotUpdateEvent();
+        }
+        
         public bool AddItemToInventory(Item item)
         {
-            if (ItemList.Count < InventorySize)
+            for (int i = 0; i < ItemList.Length; i++)
             {
-                ItemList.Add(item);
-                return true;
+                if (ItemList[i] == null)
+                {
+                    ItemList[i] = item;
+                    InventorySlotUpdated.Invoke(i);
+                    return true;
+                }
             }
 
             return false;
@@ -23,7 +33,17 @@ namespace DwarfGame
 
         public void ClearInventory()
         {
-            ItemList.Clear();
+            for (int i = 0; i < ItemList.Length; i++)
+            {
+                ItemList[i] = null;
+                InventorySlotUpdated.Invoke(i);
+            }
         }
+    }
+
+    [System.Serializable]
+    public class InventorySlotUpdateEvent : UnityEvent<int>
+    {
+        
     }
 }
