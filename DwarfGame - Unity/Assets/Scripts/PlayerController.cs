@@ -80,6 +80,19 @@ namespace DwarfGame
                 //    Debug.Log(tile.name);
                 //}
             }
+            
+            // UI Slot selection // TODO: Should this be in a separate script?
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                PlayerInventory.ChangeSelectedSlot(0);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                PlayerInventory.ChangeSelectedSlot(1);
+            }
+            
+            
         }
 
         private void FixedUpdate()

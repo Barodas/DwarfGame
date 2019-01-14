@@ -6,12 +6,16 @@ namespace DwarfGame
     [CreateAssetMenu]
     public class Inventory : ScriptableObject
     {
-        public InventorySlotUpdateEvent InventorySlotUpdated;
+        public IntEvent InventorySlotUpdated;
+        public IntEvent InventorySelectedChanged;
         public Item[] ItemList;
+
+        public int SelectedSlot { get; private set; }
         
         private void Awake()
         {
-            InventorySlotUpdated = new InventorySlotUpdateEvent();
+            InventorySlotUpdated = new IntEvent();
+            InventorySelectedChanged = new IntEvent();
         }
         
         public bool AddItemToInventory(Item item)
@@ -29,6 +33,12 @@ namespace DwarfGame
             return false;
         }
 
+        public void ChangeSelectedSlot(int targetSlot)
+        {
+            SelectedSlot = targetSlot;
+            InventorySelectedChanged.Invoke(SelectedSlot);
+        }
+        
         public void ClearInventory()
         {
             for (int i = 0; i < ItemList.Length; i++)
@@ -40,7 +50,7 @@ namespace DwarfGame
     }
 
     [System.Serializable]
-    public class InventorySlotUpdateEvent : UnityEvent<int>
+    public class IntEvent : UnityEvent<int>
     {
         
     }
