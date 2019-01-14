@@ -81,6 +81,21 @@ namespace DwarfGame
                 //}
             }
             
+            // Block Placement from inventory
+            if (Input.GetMouseButtonDown(1))
+            {
+                // TODO: This should be handled in a central place so that tile creation, item removal/reduction in Inventory is handled in a single place
+                bool placed = TilemapManager.Instance.TerrainTilemap.PlaceTile(
+                    TilemapManager.Instance.TerrainTilemap.WorldToCell(
+                        Camera.main.ScreenToWorldPoint(Input.mousePosition)),
+                    PlayerInventory.ItemList[PlayerInventory.SelectedSlot]);
+
+                if (placed)
+                {
+                    PlayerInventory.RemoveItemFromInventory(PlayerInventory.SelectedSlot);
+                }
+            }
+            
             // UI Slot selection // TODO: Should this be in a separate script?
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
@@ -91,8 +106,19 @@ namespace DwarfGame
             {
                 PlayerInventory.ChangeSelectedSlot(1);
             }
-            
-            
+
+            float scroll = Input.GetAxisRaw("Mouse ScrollWheel");
+            if (scroll != 0)
+            {
+                if (scroll > 0)
+                {
+                    PlayerInventory.ChangeSelectedSlot(PlayerInventory.SelectedSlot - 1);
+                }
+                else
+                {
+                    PlayerInventory.ChangeSelectedSlot(PlayerInventory.SelectedSlot + 1);
+                }
+            }
         }
 
         private void FixedUpdate()

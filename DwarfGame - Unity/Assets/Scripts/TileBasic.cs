@@ -10,6 +10,11 @@ public class TileBasic : TileBase
 {
     private int _damage = 100;
     public Item Item;
+
+    public TileBasic(Item item)
+    {
+        Item = item;
+    }
     
     public override void GetTileData(Vector3Int location, ITilemap tilemap, ref TileData tileData)
     {

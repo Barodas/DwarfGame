@@ -33,9 +33,19 @@ namespace DwarfGame
             return false;
         }
 
+        public void RemoveItemFromInventory(int slot)
+        {
+            if (ItemList[slot] != null)
+            {
+                ItemList[slot] = null;
+                InventorySlotUpdated.Invoke(slot);
+            }
+        }
+
         public void ChangeSelectedSlot(int targetSlot)
         {
-            SelectedSlot = targetSlot;
+            
+            SelectedSlot = (ItemList.Length + targetSlot) % ItemList.Length;
             InventorySelectedChanged.Invoke(SelectedSlot);
         }
         

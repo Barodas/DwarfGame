@@ -14,5 +14,17 @@ namespace DwarfGame
                 tileMap.SetTile(position, null);
             }
         }
+
+        public static bool PlaceTile(this Tilemap tilemap, Vector3Int position, Item item)
+        {
+            if (!tilemap.HasTile(position) && item != null)
+            {
+                TileBasic tile = new TileBasic(item);
+                tilemap.SetTile(position, tile);
+                return true;
+            }
+
+            return false;
+        }
     }
 }
