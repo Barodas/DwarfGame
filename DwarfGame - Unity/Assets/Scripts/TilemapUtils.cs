@@ -19,7 +19,7 @@ namespace DwarfGame
         {
             if (!tilemap.HasTile(position) && item != null)
             {
-                TileBasic tile = new TileBasic(item);
+                TileBasic tile = ScriptableObject.CreateInstance<TileBasic>().Initialise(item);
                 tilemap.SetTile(position, tile);
                 return true;
             }
