@@ -88,7 +88,7 @@ namespace DwarfGame
                 bool placed = TilemapManager.Instance.TerrainTilemap.PlaceTile(
                     TilemapManager.Instance.TerrainTilemap.WorldToCell(
                         Camera.main.ScreenToWorldPoint(Input.mousePosition)),
-                    PlayerInventory.ItemList[PlayerInventory.SelectedSlot]);
+                    PlayerInventory.ItemList[PlayerInventory.SelectedSlot].Item);
 
                 if (placed)
                 {

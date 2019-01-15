@@ -10,7 +10,7 @@ namespace DwarfGame
             TileBasic tile = tileMap.GetTile<TileBasic>(position);
             if (tile != null)
             {
-                WorldItem worldItem = WorldItem.CreateWorldItem(tile.Item, tileMap.CellToWorld(position));
+                WorldItem worldItem = WorldItem.CreateWorldItem(new InventoryItem(tile.Item), tileMap.CellToWorld(position));
                 tileMap.SetTile(position, null);
             }
         }

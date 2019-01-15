@@ -10,12 +10,12 @@ namespace DwarfGame
         private BoxCollider2D _col;
         private SpriteRenderer _renderer;
         
-        public Item Item;
+        public InventoryItem Item;
 
-        public static WorldItem CreateWorldItem(Item item, Vector3 position)
+        public static WorldItem CreateWorldItem(InventoryItem item, Vector3 position)
         {
             GameObject go = Instantiate(Resources.Load(PrefabName)) as GameObject;
-            go.name = item.name;
+            go.name = item.Item.name;
             go.transform.position = position + new Vector3(0.5f, 0.5f, 0); // Offset to center of tile
             WorldItem worldItem = go.GetComponent<WorldItem>();
             worldItem.Item = item;
