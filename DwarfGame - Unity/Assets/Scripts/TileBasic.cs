@@ -16,6 +16,12 @@ public class TileBasic : TileBase
         Item = item;
         return this;
     }
+
+    public bool DamageTile(int amount)
+    {
+        _damage -= amount;
+        return _damage <= 0;
+    }
     
     public override void GetTileData(Vector3Int location, ITilemap tilemap, ref TileData tileData)
     {

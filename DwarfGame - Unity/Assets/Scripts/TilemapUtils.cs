@@ -5,13 +5,13 @@ namespace DwarfGame
 {
     public static class TilemapUtils
     {
-        public static void DestroyTile(this Tilemap tileMap, Vector3Int position)
+        public static void DestroyTile(this Tilemap tilemap, Vector3Int position)
         {
-            TileBasic tile = tileMap.GetTile<TileBasic>(position);
+            TileBasic tile = tilemap.GetTile<TileBasic>(position);
             if (tile != null)
             {
-                WorldItem worldItem = WorldItem.CreateWorldItem(new InventoryItem(tile.Item), tileMap.CellToWorld(position));
-                tileMap.SetTile(position, null);
+                WorldItem worldItem = WorldItem.CreateWorldItem(new InventoryItem(tile.Item), tilemap.CellToWorld(position));
+                tilemap.SetTile(position, null);
             }
         }
 
@@ -25,6 +25,19 @@ namespace DwarfGame
             }
 
             return false;
+        }
+
+        public static void DamageTile(this Tilemap tilemap, Vector3Int position, int amount)
+        {
+            TileBasic tile = tilemap.GetTile<TileBasic>(position);
+            if (tile != null)
+            {
+                if (tile.DamageTile(amount))
+                {
+                    WorldItem worldItem = WorldItem.CreateWorldItem(new InventoryItem(tile.Item), tilemap.CellToWorld(position));
+                    tilemap.SetTile(position, null);
+                }
+            }
         }
     }
 }
