@@ -9,7 +9,7 @@ namespace DwarfGame
 
         public Tilemap TerrainTilemap;
         public Tilemap TerrainBackgroundTilemap;
-
+        
         void Awake()
         {
             if(Instance == null)

@@ -17,6 +17,7 @@ namespace DwarfGame
         public PlayerVariables PlayerVars;
         public GameObject BodySprite;
         public LayerMask CollisionMask;
+        public Inventory PlayerInventory;
 
         private Tilemap _terrain;
         private BoxCollider2D _col;
@@ -67,13 +68,47 @@ namespace DwarfGame
             // Block removal test code
             if(Input.GetMouseButtonDown(0))
             {
-                TilemapManager.Instance.TerrainTilemap.SetTile(TilemapManager.Instance.TerrainTilemap.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition)), null);
+                TilemapManager.Instance.TerrainTilemap.DestroyTile(
+                    TilemapManager.Instance.TerrainTilemap.WorldToCell(
+                        Camera.main.ScreenToWorldPoint(Input.mousePosition)));
+                
+                //TilemapManager.Instance.TerrainTilemap.SetTile(TilemapManager.Instance.TerrainTilemap.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition)), null);
     
                 //TileBase tile = TilemapManager.Instance.TerrainTilemap.GetTile(TilemapManager.Instance.TerrainTilemap.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
                 //if (tile != null)
                 //{
                 //    Debug.Log(tile.name);
                 //}
+            }
+            
+            // Block Placement from inventory
+            if (Input.GetMouseButtonDown(1))
+            {
+                PlayerInventory.UseSelectedItem();
+            }
+            
+            // UI Slot selection // TODO: Should this be in a separate script?
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                PlayerInventory.ChangeSelectedSlot(0);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                PlayerInventory.ChangeSelectedSlot(1);
+            }
+
+            float scroll = Input.GetAxisRaw("Mouse ScrollWheel");
+            if (scroll != 0)
+            {
+                if (scroll > 0)
+                {
+                    PlayerInventory.ChangeSelectedSlot(PlayerInventory.SelectedSlot - 1);
+                }
+                else
+                {
+                    PlayerInventory.ChangeSelectedSlot(PlayerInventory.SelectedSlot + 1);
+                }
             }
         }
 
@@ -164,6 +199,15 @@ namespace DwarfGame
                 distance -= Extents.x;
 
                 transform.Translate(direction * distance);
+            }
+        }
+
+        private void OnTriggerStay2D(Collider2D other)
+        {
+            WorldItem worldItem = other.gameObject.GetComponent<WorldItem>();
+            if (worldItem != null)
+            {
+                worldItem.AddToInventory(PlayerInventory);
             }
         }
     }
