@@ -19,8 +19,14 @@ namespace DwarfGame
         
         private void UpdateUiSlot(int slot)
         {
-            // TODO: Consider handling empty inventory slots better than using nulls
-            UiSlots[slot].UpdateSprite(PlayerInventory.ItemList[slot]?.Item != null ? PlayerInventory.ItemList[slot].ItemSprite : null);
+            if (PlayerInventory.ItemList[slot]?.Item != null)
+            {
+                UiSlots[slot].UpdateSlot(PlayerInventory.ItemList[slot].ItemSprite, PlayerInventory.ItemList[slot].StackSize);
+            }
+            else
+            {
+                UiSlots[slot].ClearSlot();
+            }
         }
 
         private void RefreshUiSlots()

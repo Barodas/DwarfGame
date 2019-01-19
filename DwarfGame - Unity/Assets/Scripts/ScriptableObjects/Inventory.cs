@@ -20,11 +20,11 @@ namespace DwarfGame
 
         public void UseSelectedItem()
         {
-            if (ItemList[SelectedSlot].UseItem())
+            if (ItemList[SelectedSlot] != null && ItemList[SelectedSlot].UseItem())
             {
                 ItemList[SelectedSlot] = null;
-                InventorySlotUpdated.Invoke(SelectedSlot);
             }
+            InventorySlotUpdated.Invoke(SelectedSlot);
         }
         
         /// <summary>
