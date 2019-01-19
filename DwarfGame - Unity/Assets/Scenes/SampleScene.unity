@@ -20098,7 +20098,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TerrainTilemap: {fileID: 1085319850}
   TerrainBackgroundTilemap: {fileID: 570703731}
-  BaseTilePrefab: {fileID: 11400000, guid: 4d70076fd59e47b4898b77a8f9f86a00, type: 2}
 --- !u!1001 &1890828882
 PrefabInstance:
   m_ObjectHideFlags: 0

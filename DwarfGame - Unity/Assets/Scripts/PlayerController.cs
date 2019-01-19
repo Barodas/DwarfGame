@@ -84,16 +84,7 @@ namespace DwarfGame
             // Block Placement from inventory
             if (Input.GetMouseButtonDown(1))
             {
-                // TODO: This should be handled in a central place so that tile creation, item removal/reduction in Inventory is handled in a single place
-                bool placed = TilemapManager.Instance.TerrainTilemap.PlaceTile(
-                    TilemapManager.Instance.TerrainTilemap.WorldToCell(
-                        Camera.main.ScreenToWorldPoint(Input.mousePosition)),
-                    PlayerInventory.ItemList[PlayerInventory.SelectedSlot].Item);
-
-                if (placed)
-                {
-                    PlayerInventory.RemoveItemFromInventory(PlayerInventory.SelectedSlot);
-                }
+                PlayerInventory.UseSelectedItem();
             }
             
             // UI Slot selection // TODO: Should this be in a separate script?

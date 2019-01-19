@@ -15,11 +15,21 @@ MonoBehaviour:
   InventorySlotUpdated:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: DwarfGame.InventorySlotUpdateEvent, Assembly-CSharp, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
+    m_TypeName: DwarfGame.IntEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
+  InventorySelectedChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: DwarfGame.IntEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
   ItemList:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - Item: {fileID: 0}
+    StackSize: 0
+  - Item: {fileID: 0}
+    StackSize: 0
+  - Item: {fileID: 0}
+    StackSize: 0
+  - Item: {fileID: 0}
+    StackSize: 0
+  - Item: {fileID: 0}
+    StackSize: 0

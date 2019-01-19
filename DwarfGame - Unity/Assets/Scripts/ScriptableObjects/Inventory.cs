@@ -17,25 +17,34 @@ namespace DwarfGame
             InventorySlotUpdated = new IntEvent();
             InventorySelectedChanged = new IntEvent();
         }
+
+        public void UseSelectedItem()
+        {
+            if (ItemList[SelectedSlot].UseItem())
+            {
+                ItemList[SelectedSlot] = null;
+                InventorySlotUpdated.Invoke(SelectedSlot);
+            }
+        }
         
-        public bool AddItemToInventory(InventoryItem item)
+        /// <summary>
+        /// Adds the InventoryItem to the Inventory
+        /// </summary>
+        /// <param name="inventoryItem"></param>
+        /// <returns>Returns false if the inventory could not fit the entire inventoryItem</returns>
+        public bool AddItemToInventory(InventoryItem inventoryItem)
         {
             // Add items to existing slots of same item
             for (int i = 0; i < ItemList.Length; i++)
             {
-                if (ItemList[i].Item != null && ItemList[i].Item == item.Item)
+                if (ItemList[i]?.Item != null && ItemList[i].Item == inventoryItem.Item)
                 {
-                    if (ItemList[i].StackSize + item.StackSize < item.Item.StackLimit)
+                    if (ItemList[i].Combine(inventoryItem))
                     {
-                        ItemList[i].StackSize += item.StackSize;
-                        item.StackSize = 0;
                         InventorySlotUpdated.Invoke(i);
                         return true;
                     }
-
-                    int remainder = item.Item.StackLimit - ItemList[i].StackSize;
-                    ItemList[i].StackSize = item.Item.StackLimit;
-                    item.StackSize -= remainder;
+                    
                     InventorySlotUpdated.Invoke(i);
                 }
             }
@@ -45,26 +54,13 @@ namespace DwarfGame
             {
                 if (ItemList[i].Item == null)
                 {
-                    ItemList[i] = item;
+                    ItemList[i] = inventoryItem;
                     InventorySlotUpdated.Invoke(i);
                     return true;
                 }
             }
 
             return false;
-        }
-
-        public void RemoveItemFromInventory(int slot, int amount = 1)
-        {
-            if (ItemList[slot].Item != null)
-            {
-                ItemList[slot].StackSize -= amount;
-                if (ItemList[slot].StackSize <= 0)
-                {
-                    ItemList[slot].Item = null; // TODO: We need to be able to destroy the InventoryItem cleanly rather than destroying its elements
-                }
-                InventorySlotUpdated.Invoke(slot);
-            }
         }
 
         public void ChangeSelectedSlot(int targetSlot)
