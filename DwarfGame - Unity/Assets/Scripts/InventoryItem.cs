@@ -17,11 +17,11 @@ namespace DwarfGame
             StackSize = stackSize;
         }
 
-        public bool UseItem()
+        public bool UseItem(Vector2 targetPosition)
         {
             TilemapManager.Instance.TerrainTilemap.PlaceTile(
                 TilemapManager.Instance.TerrainTilemap.WorldToCell(
-                    Camera.main.ScreenToWorldPoint(Input.mousePosition)),
+                    targetPosition),
                 Item);
 
             return --StackSize <= 0;

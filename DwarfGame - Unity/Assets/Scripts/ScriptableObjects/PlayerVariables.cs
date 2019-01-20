@@ -17,5 +17,7 @@ namespace DwarfGame
         public float PlayerWidth = 0.5f;
         public float PlayerHeightFromCenter = 0.4f;
         public float FallSpeedBase = 3f;
+
+        public float PlayerReach = 4f;
     }
 }

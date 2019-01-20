@@ -18,9 +18,9 @@ namespace DwarfGame
             InventorySelectedChanged = new IntEvent();
         }
 
-        public void UseSelectedItem()
+        public void UseSelectedItem(Vector2 targetPosition)
         {
-            if (ItemList[SelectedSlot] != null && ItemList[SelectedSlot].UseItem())
+            if (ItemList[SelectedSlot] != null && ItemList[SelectedSlot].UseItem(targetPosition))
             {
                 ItemList[SelectedSlot] = null;
             }

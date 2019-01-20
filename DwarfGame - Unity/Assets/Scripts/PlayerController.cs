@@ -65,12 +65,22 @@ namespace DwarfGame
             }
             
             
+            // Player focus raycast
+            Vector2 rayDirection = ((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition) - Center).normalized;
+            float rayDistance = Mathf.Min(((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition) - Center).magnitude, PlayerVars.PlayerReach);
+            RaycastHit2D hit = Utils.Raycast(Center, rayDirection, rayDistance, CollisionMask, Color.red);
+            
             // Block removal test code
             if(Input.GetMouseButtonDown(0))
             {
+                Vector2 targetPosition = hit.point;
+                if (hit.collider != null)
+                {
+                    targetPosition += (-hit.normal * 0.1f);
+                }
                 TilemapManager.Instance.DamageTile(TileLayer.Terrain,
                     TilemapManager.Instance.TerrainTilemap.WorldToCell(
-                        Camera.main.ScreenToWorldPoint(Input.mousePosition)),
+                        targetPosition),
                     20);
                 
                 //TilemapManager.Instance.TerrainTilemap.SetTile(TilemapManager.Instance.TerrainTilemap.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition)), null);
@@ -85,7 +95,13 @@ namespace DwarfGame
             // Block Placement from inventory
             if (Input.GetMouseButtonDown(1))
             {
-                PlayerInventory.UseSelectedItem();
+                // TODO: Do not allow placement if the player occupies the target tile
+                Vector2 targetPosition = hit.point;
+                if (hit.collider != null)
+                {
+                    targetPosition += (hit.normal * 0.1f);
+                }
+                PlayerInventory.UseSelectedItem(targetPosition);
             }
             
             // UI Slot selection // TODO: Should this be in a separate script?
