@@ -19,6 +19,7 @@ namespace DwarfGame
         
         public PlayerVariables PlayerVars;
         public GameObject BodySprite;
+        public Transform PlayerRayOrigin;
         public LayerMask CollisionMask;
         public Inventory PlayerInventory;
 
@@ -33,6 +34,7 @@ namespace DwarfGame
 
         private Vector2 Center => _col.bounds.center;
         private Vector2 Extents => _col.bounds.extents;
+        private Vector2 RayOrigin => PlayerRayOrigin.transform.position;
 
         private Dictionary<Vector2, HitDirection> _normalToHitDirection = new Dictionary<Vector2, HitDirection>
         {
@@ -78,9 +80,9 @@ namespace DwarfGame
             
             
             // Player focus raycast
-            Vector2 rayDirection = ((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition) - Center).normalized;
-            float rayDistance = Mathf.Min(((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition) - Center).magnitude, PlayerVars.PlayerReach);
-            RaycastHit2D hit = Utils.Raycast(Center, rayDirection, rayDistance, CollisionMask, Color.red);
+            Vector2 rayDirection = ((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition) - RayOrigin).normalized;
+            float rayDistance = Mathf.Min(((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition) - RayOrigin).magnitude, PlayerVars.PlayerReach);
+            RaycastHit2D hit = Utils.Raycast(RayOrigin, rayDirection, rayDistance, CollisionMask, Color.red);
             
             // Block removal test code
             if(Input.GetMouseButton(0))
@@ -91,26 +93,35 @@ namespace DwarfGame
                     if (hit.collider != null)
                     {
                         targetPosition += (-hit.normal * 0.1f);
-                    }
-                    TilemapManager.Instance.DamageTile(TileLayer.Terrain,
-                        TilemapManager.Instance.TerrainTilemap.WorldToCell(
-                            targetPosition),
-                        20, _normalToHitDirection[hit.normal]);
+                        
+                        TilemapManager.Instance.DamageTile(TileLayer.Terrain,
+                            TilemapManager.Instance.TerrainTilemap.WorldToCell(
+                                targetPosition),
+                            20, _normalToHitDirection[hit.normal]);
 
-                    StartCoroutine(SwingTimer());
+                        StartCoroutine(SwingTimer());
+                    }
                 }
             }
             
             // Block Placement from inventory
             if (Input.GetMouseButtonDown(1))
             {
-                // TODO: Do not allow placement if the player occupies the target tile
                 Vector2 targetPosition = hit.point;
                 if (hit.collider != null)
                 {
                     targetPosition += (hit.normal * 0.1f);
                 }
-                PlayerInventory.UseSelectedItem(targetPosition);
+                else
+                {
+                    targetPosition = RayOrigin + rayDirection * rayDistance;
+                }
+
+                if (TilemapManager.Instance.TerrainTilemap.WorldToCell(targetPosition) !=
+                    TilemapManager.Instance.TerrainTilemap.WorldToCell(Center))
+                {
+                    PlayerInventory.UseSelectedItem(targetPosition);
+                }
             }
             
             // UI Slot selection // TODO: Should this be in a separate script?
