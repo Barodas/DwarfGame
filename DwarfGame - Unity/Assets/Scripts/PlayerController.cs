@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.Tilemaps;
 
 namespace DwarfGame
@@ -30,6 +32,14 @@ namespace DwarfGame
         private Vector2 Center => _col.bounds.center;
         private Vector2 Extents => _col.bounds.extents;
 
+        private Dictionary<Vector2, HitDirection> _normalToHitDirection = new Dictionary<Vector2, HitDirection>
+        {
+            {new Vector2(0, 1), HitDirection.Top},
+            {new Vector2(0, -1), HitDirection.Bottom},
+            {new Vector2(-1, 0), HitDirection.Left},
+            {new Vector2(1, 0), HitDirection.Right}
+        };
+        
         private void Start()
         {
             _terrain = TilemapManager.Instance.TerrainTilemap;
@@ -81,7 +91,7 @@ namespace DwarfGame
                 TilemapManager.Instance.DamageTile(TileLayer.Terrain,
                     TilemapManager.Instance.TerrainTilemap.WorldToCell(
                         targetPosition),
-                    20);
+                    20, _normalToHitDirection[hit.normal]);
                 
                 //TilemapManager.Instance.TerrainTilemap.SetTile(TilemapManager.Instance.TerrainTilemap.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition)), null);
     
