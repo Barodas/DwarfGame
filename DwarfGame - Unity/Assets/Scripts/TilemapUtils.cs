@@ -26,18 +26,5 @@ namespace DwarfGame
 
             return false;
         }
-
-        public static void DamageTile(this Tilemap tilemap, Vector3Int position, int amount)
-        {
-            TileBasic tile = tilemap.GetTile<TileBasic>(position);
-            if (tile != null)
-            {
-                if (tile.DamageTile(amount))
-                {
-                    WorldItem worldItem = WorldItem.CreateWorldItem(new InventoryItem(tile.Item), tilemap.CellToWorld(position));
-                    tilemap.SetTile(position, null);
-                }
-            }
-        }
     }
 }

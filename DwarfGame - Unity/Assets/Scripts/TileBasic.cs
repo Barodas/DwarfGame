@@ -8,19 +8,12 @@ using UnityEditor;
 
 public class TileBasic : TileBase
 {
-    private int _damage = 100;
     public Item Item;
 
     public TileBasic Initialise(Item item)
     {
         Item = item;
         return this;
-    }
-
-    public bool DamageTile(int amount)
-    {
-        _damage -= amount;
-        return _damage <= 0;
     }
     
     public override void GetTileData(Vector3Int location, ITilemap tilemap, ref TileData tileData)
