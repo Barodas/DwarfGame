@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.Tilemaps;
@@ -28,6 +29,7 @@ namespace DwarfGame
 
         private float _targetJumpHeight;
         private float _moveInput;
+        private bool _canSwing = true;
 
         private Vector2 Center => _col.bounds.center;
         private Vector2 Extents => _col.bounds.extents;
@@ -81,25 +83,22 @@ namespace DwarfGame
             RaycastHit2D hit = Utils.Raycast(Center, rayDirection, rayDistance, CollisionMask, Color.red);
             
             // Block removal test code
-            if(Input.GetMouseButtonDown(0))
+            if(Input.GetMouseButton(0))
             {
-                Vector2 targetPosition = hit.point;
-                if (hit.collider != null)
+                if (_canSwing)
                 {
-                    targetPosition += (-hit.normal * 0.1f);
+                    Vector2 targetPosition = hit.point;
+                    if (hit.collider != null)
+                    {
+                        targetPosition += (-hit.normal * 0.1f);
+                    }
+                    TilemapManager.Instance.DamageTile(TileLayer.Terrain,
+                        TilemapManager.Instance.TerrainTilemap.WorldToCell(
+                            targetPosition),
+                        20, _normalToHitDirection[hit.normal]);
+
+                    StartCoroutine(SwingTimer());
                 }
-                TilemapManager.Instance.DamageTile(TileLayer.Terrain,
-                    TilemapManager.Instance.TerrainTilemap.WorldToCell(
-                        targetPosition),
-                    20, _normalToHitDirection[hit.normal]);
-                
-                //TilemapManager.Instance.TerrainTilemap.SetTile(TilemapManager.Instance.TerrainTilemap.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition)), null);
-    
-                //TileBase tile = TilemapManager.Instance.TerrainTilemap.GetTile(TilemapManager.Instance.TerrainTilemap.WorldToCell(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
-                //if (tile != null)
-                //{
-                //    Debug.Log(tile.name);
-                //}
             }
             
             // Block Placement from inventory
@@ -236,6 +235,13 @@ namespace DwarfGame
             {
                 worldItem.AddToInventory(PlayerInventory);
             }
+        }
+
+        private IEnumerator SwingTimer()
+        {
+            _canSwing = false;
+            yield return new WaitForSecondsRealtime(PlayerVars.SwingSpeed);
+            _canSwing = true;
         }
     }
 
