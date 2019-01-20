@@ -81,7 +81,7 @@ namespace DwarfGame
             
             // Player focus raycast
             Vector2 rayDirection = ((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition) - RayOrigin).normalized;
-            float rayDistance = Mathf.Min(((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition) - RayOrigin).magnitude, PlayerVars.PlayerReach);
+            float rayDistance = Mathf.Min(((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition) - RayOrigin).magnitude, PlayerVars.Reach);
             RaycastHit2D hit = Utils.Raycast(RayOrigin, rayDirection, rayDistance, CollisionMask, Color.red);
             
             // Block removal test code
@@ -97,7 +97,8 @@ namespace DwarfGame
                         TilemapManager.Instance.DamageTile(TileLayer.Terrain,
                             TilemapManager.Instance.TerrainTilemap.WorldToCell(
                                 targetPosition),
-                            20, _normalToHitDirection[hit.normal]);
+                            PlayerVars.BaseDamage, 
+                            _normalToHitDirection[hit.normal]);
 
                         StartCoroutine(SwingTimer());
                     }

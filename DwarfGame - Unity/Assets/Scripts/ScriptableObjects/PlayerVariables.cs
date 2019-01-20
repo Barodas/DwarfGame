@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace DwarfGame
 {
@@ -14,11 +15,12 @@ namespace DwarfGame
         public float[] JumpHeightModifier = { 1f };
         public int JumpHeightCurModifier = 0;
 
-        public float PlayerWidth = 0.5f;
-        public float PlayerHeightFromCenter = 0.4f;
+        public float Width = 0.5f;
+        public float HeightFromCenter = 0.4f;
         public float FallSpeedBase = 3f;
 
-        public float PlayerReach = 4f;
+        public float Reach = 4f;
         public float SwingSpeed = 0.5f;
+        public int BaseDamage = 2;
     }
 }
