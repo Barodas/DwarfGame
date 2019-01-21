@@ -15,7 +15,7 @@ namespace DwarfGame
             }
         }
 
-        public static bool PlaceTile(this Tilemap tilemap, Vector3Int position, Item item)
+        public static bool PlaceTile(this Tilemap tilemap, Vector3Int position, ItemTile item)
         {
             if (!tilemap.HasTile(position) && item != null)
             {

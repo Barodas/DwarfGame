@@ -7,6 +7,9 @@ namespace DwarfGame
     {
         public Sprite ItemSprite;
         public int StackLimit = 1;
-        public int WorldTileDamage = 1;
+
+        public virtual void Use(Vector2 position)
+        {
+        }
     }
 }

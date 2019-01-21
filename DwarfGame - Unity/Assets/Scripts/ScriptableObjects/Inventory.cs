@@ -52,7 +52,7 @@ namespace DwarfGame
             // Add to next available slot
             for (int i = 0; i < ItemList.Length; i++)
             {
-                if (ItemList[i].Item == null)
+                if (ItemList[i] == null || ItemList[i].Item == null)
                 {
                     ItemList[i] = inventoryItem;
                     InventorySlotUpdated.Invoke(i);

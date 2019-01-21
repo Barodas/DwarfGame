@@ -19,11 +19,7 @@ namespace DwarfGame
 
         public bool UseItem(Vector2 targetPosition)
         {
-            TilemapManager.Instance.TerrainTilemap.PlaceTile(
-                TilemapManager.Instance.TerrainTilemap.WorldToCell(
-                    targetPosition),
-                Item);
-
+            Item.Use(targetPosition);
             return --StackSize <= 0;
         }
         

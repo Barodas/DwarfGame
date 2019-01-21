@@ -9,9 +9,9 @@ namespace DwarfGame
 {
     public class TileBasic : TileBase
     {
-        public Item Item;
+        public ItemTile Item;
 
-        public TileBasic Initialise(Item item)
+        public TileBasic Initialise(ItemTile item)
         {
             Item = item;
             return this;
