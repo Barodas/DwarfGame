@@ -20699,7 +20699,7 @@ PrefabInstance:
     - target: {fileID: 4929087787281688578, guid: 3988b96a5c29191469a582141ee6d2b5,
         type: 3}
       propertyPath: m_Name
-      value: Stone
+      value: Pickaxe
       objectReference: {fileID: 0}
     - target: {fileID: 4929087787281688582, guid: 3988b96a5c29191469a582141ee6d2b5,
         type: 3}

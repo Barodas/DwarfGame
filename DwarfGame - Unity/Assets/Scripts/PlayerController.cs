@@ -94,10 +94,27 @@ namespace DwarfGame
                     {
                         targetPosition += (-hit.normal * 0.1f);
                         
+                        int damage = PlayerVars.BaseDamage;
+                        if (PlayerInventory.SelectedSlotItem.Item is ItemTool selectedItem)
+                        {
+                            ItemTile tile = TilemapManager.Instance.TerrainTilemap
+                                .GetTile<TileBasic>(TilemapManager.Instance.TerrainTilemap.WorldToCell(targetPosition))
+                                .Item;
+
+                            if (tile.Class != TileClass.None && tile.Class == selectedItem.Class)
+                            {
+                                damage = selectedItem.ClassDamage;
+                            }
+                            else
+                            {
+                                damage = selectedItem.BaseDamage;
+                            }
+                        }
+                        
                         TilemapManager.Instance.DamageTile(TileLayer.Terrain,
                             TilemapManager.Instance.TerrainTilemap.WorldToCell(
                                 targetPosition),
-                            PlayerVars.BaseDamage, 
+                            damage, 
                             _normalToHitDirection[hit.normal]);
 
                         StartCoroutine(SwingTimer());

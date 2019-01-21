@@ -11,13 +11,14 @@ namespace DwarfGame
         public InventoryItem[] ItemList;// TODO: We need better null checking around InventoryItems
 
         public int SelectedSlot { get; private set; }
-        
+        public InventoryItem SelectedSlotItem => ItemList[SelectedSlot];
+
         private void Awake()
         {
             InventorySlotUpdated = new IntEvent();
             InventorySelectedChanged = new IntEvent();
         }
-
+        
         public void UseSelectedItem(Vector2 targetPosition)
         {
             if (ItemList[SelectedSlot] != null && ItemList[SelectedSlot].UseItem(targetPosition))
