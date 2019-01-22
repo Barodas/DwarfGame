@@ -10,6 +10,9 @@ namespace DwarfGame
         Wood
     }
     
+    /// <summary>
+    /// An Item that can be placed in the world as tile.
+    /// </summary>
     [CreateAssetMenu]
     public class ItemTile : Item
     {

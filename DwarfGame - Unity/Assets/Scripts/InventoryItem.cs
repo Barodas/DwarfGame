@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace DwarfGame
 {
+    /// <summary>
+    /// Instanced version of an item in the inventory.
+    /// </summary>
     [System.Serializable]
     public class InventoryItem
     {

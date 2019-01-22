@@ -2,6 +2,9 @@
 
 namespace DwarfGame
 {
+    /// <summary>
+    /// An Item that is used as a tool.
+    /// </summary>
     [CreateAssetMenu]
     public class ItemTool : Item
     {

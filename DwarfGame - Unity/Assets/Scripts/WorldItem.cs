@@ -2,6 +2,9 @@
 
 namespace DwarfGame
 {
+    /// <summary>
+    /// Container for an Item that has been dropped in the world in Item form.
+    /// </summary>
     [RequireComponent(typeof(BoxCollider2D), typeof(SpriteRenderer))]
     public class WorldItem : MonoBehaviour
     {
