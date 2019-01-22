@@ -19,11 +19,20 @@ namespace DwarfGame
         public TileClass Class = TileClass.None;
         public int WorldTileDamage = 1;
 
-        public override void Use(Vector2 position)
+        public override ResolutionParams RightClickUse(TargetParams args)
         {
-            TilemapManager.Instance.TerrainTilemap.PlaceTile(
-                TilemapManager.Instance.TerrainTilemap.WorldToCell(position),
-                this);
+            Vector2 position = args.TargetType == TargetType.Tile ? args.AdjacentPosition : args.TargetPosition;
+            
+            if (TilemapManager.Instance.TerrainTilemap.WorldToCell(position) !=
+                TilemapManager.Instance.TerrainTilemap.WorldToCell(args.OriginPosition))
+            {
+                TilemapManager.Instance.TerrainTilemap.PlaceTile(
+                    TilemapManager.Instance.TerrainTilemap.WorldToCell(position),
+                    this);
+                --args.StackSize;
+            }
+            
+            return new ResolutionParams{StackSize = args.StackSize, IntStore = args.IntStore};
         }
     }
 }

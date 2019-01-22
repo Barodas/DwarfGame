@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -78,68 +79,26 @@ namespace DwarfGame
                 BodySprite.transform.localScale = new Vector3(1, 1, 1);
             }
             
+            // Get the current target
+            TargetParams target = GetTarget();
             
-            // Player focus raycast
-            Vector2 rayDirection = ((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition) - RayOrigin).normalized;
-            float rayDistance = Mathf.Min(((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition) - RayOrigin).magnitude, PlayerVars.Reach);
-            RaycastHit2D hit = Utils.Raycast(RayOrigin, rayDirection, rayDistance, CollisionMask, Color.red);
-            
-            // Block removal test code
+            // Left Click
             if(Input.GetMouseButton(0))
             {
                 if (_canSwing)
                 {
-                    Vector2 targetPosition = hit.point;
-                    if (hit.collider != null)
-                    {
-                        targetPosition += (-hit.normal * 0.1f);
-                        
-                        int damage = PlayerVars.BaseDamage;
-                        if (PlayerInventory.SelectedSlotItem.Item is ItemTool selectedItem)
-                        {
-                            ItemTile tile = TilemapManager.Instance.TerrainTilemap
-                                .GetTile<TileBasic>(TilemapManager.Instance.TerrainTilemap.WorldToCell(targetPosition))
-                                .Item;
-
-                            if (tile.Class != TileClass.None && tile.Class == selectedItem.Class)
-                            {
-                                damage = selectedItem.ClassDamage;
-                            }
-                            else
-                            {
-                                damage = selectedItem.BaseDamage;
-                            }
-                        }
-                        
-                        TilemapManager.Instance.DamageTile(TileLayer.Terrain,
-                            TilemapManager.Instance.TerrainTilemap.WorldToCell(
-                                targetPosition),
-                            damage, 
-                            _normalToHitDirection[hit.normal]);
-
-                        StartCoroutine(SwingTimer());
-                    }
+                    target.ClickType = ClickType.Left;
+                    PlayerInventory.UseSelectedItem(target);
+                    
+                    StartCoroutine(SwingTimer());
                 }
             }
             
-            // Block Placement from inventory
+            // Right Click
             if (Input.GetMouseButtonDown(1))
             {
-                Vector2 targetPosition = hit.point;
-                if (hit.collider != null)
-                {
-                    targetPosition += (hit.normal * 0.1f);
-                }
-                else
-                {
-                    targetPosition = RayOrigin + rayDirection * rayDistance;
-                }
-
-                if (TilemapManager.Instance.TerrainTilemap.WorldToCell(targetPosition) !=
-                    TilemapManager.Instance.TerrainTilemap.WorldToCell(Center))
-                {
-                    PlayerInventory.UseSelectedItem(targetPosition);
-                }
+                target.ClickType = ClickType.Right;
+                PlayerInventory.UseSelectedItem(target);
             }
             
             // UI Slot selection // TODO: Should this be in a separate script?
@@ -266,6 +225,35 @@ namespace DwarfGame
             }
         }
 
+        private TargetParams GetTarget()
+        {
+            // TODO: How do we handle focusing on the foreground or background
+            Vector2 rayDirection = ((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition) - RayOrigin).normalized;
+            float rayDistance = Mathf.Min(((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition) - RayOrigin).magnitude, PlayerVars.Reach);
+            RaycastHit2D hit = Utils.Raycast(RayOrigin, rayDirection, rayDistance, CollisionMask, Color.red);
+            
+            // Once we get the focus raycast we need to determine what we have hit (tile, entity, etc)
+            // Once we know the target type we can collect required data into a container
+            if (hit.collider != null)
+            {
+                Vector2 targetPosition = hit.point + (-hit.normal * 0.1f);
+                Vector2 adjacentPosition = hit.point + (hit.normal * 0.1f);
+                
+                // Check for tile collision
+                TileBasic tile = TilemapManager.Instance.TerrainTilemap
+                    .GetTile<TileBasic>(TilemapManager.Instance.TerrainTilemap.WorldToCell(targetPosition));
+                if (tile != null)
+                {
+                    return new TargetParams {TargetType = TargetType.Tile, TileClass = tile.Item.Class, TargetPosition = targetPosition, AdjacentPosition = adjacentPosition, OriginPosition = Center, HitDirection = _normalToHitDirection[hit.normal], Damage = PlayerVars.BaseDamage};
+                }
+                
+                // TODO: Check for Background collision
+                // TODO: Check for entity collision
+            }
+            
+            return new TargetParams {TargetType = TargetType.None, TargetPosition = RayOrigin + rayDirection * rayDistance, AdjacentPosition = RayOrigin + rayDirection * rayDistance, OriginPosition = Center};
+        }
+        
         private IEnumerator SwingTimer()
         {
             _canSwing = false;

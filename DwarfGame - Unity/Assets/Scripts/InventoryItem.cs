@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.SymbolStore;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.SymbolStore;
 using UnityEngine;
 
 namespace DwarfGame
@@ -12,6 +14,8 @@ namespace DwarfGame
         public Item Item;
         public int StackSize;
 
+        private Dictionary<string, int> _intStore;
+        
         public Sprite ItemSprite => Item.ItemSprite;
 
         public InventoryItem(Item item, int stackSize = 1)
@@ -19,11 +23,27 @@ namespace DwarfGame
             Item = item;
             StackSize = stackSize;
         }
-
-        public bool UseItem(Vector2 targetPosition)
+        
+        public bool UseItem(TargetParams args)
         {
-            Item.Use(targetPosition);
-            return --StackSize <= 0;
+            args.IntStore = _intStore;
+            args.StackSize = StackSize;
+            
+            ResolutionParams resolution;
+            switch (args.ClickType)
+            {
+                default:
+                    resolution = Item.LeftClickUse(args);
+                    break;
+                case ClickType.Right:
+                    resolution = Item.RightClickUse(args);
+                    break;
+            }
+            
+            _intStore = resolution.IntStore;
+            StackSize = resolution.StackSize;
+            
+            return StackSize <= 0;
         }
         
         /// <summary>

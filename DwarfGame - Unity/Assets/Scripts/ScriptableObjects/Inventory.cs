@@ -19,9 +19,10 @@ namespace DwarfGame
             InventorySelectedChanged = new IntEvent();
         }
         
-        public void UseSelectedItem(Vector2 targetPosition)
+        // TODO: Handle calls when the selected slot is empty (breaking blocks with an empty hand should be possible)
+        public void UseSelectedItem(TargetParams args)
         {
-            if (ItemList[SelectedSlot] != null && ItemList[SelectedSlot].UseItem(targetPosition))
+            if (ItemList[SelectedSlot] != null && ItemList[SelectedSlot].UseItem(args))
             {
                 ItemList[SelectedSlot] = null;
             }

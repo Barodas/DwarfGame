@@ -12,8 +12,19 @@ namespace DwarfGame
         public int BaseDamage = 1;
         public int ClassDamage = 2;
         
-        public override void Use(Vector2 position)
+        // TODO: Item Durability using IntStore
+        
+        public override ResolutionParams LeftClickUse(TargetParams args)
         {
+            args.Damage = BaseDamage;
+            if (args.TileClass != TileClass.None && args.TileClass == Class)
+            {
+                args.Damage = ClassDamage;
+            }
+
+            base.LeftClickUse(args);
+            
+            return new ResolutionParams{TargetType = args.TargetType, Position = args.TargetPosition, Damage = args.Damage, StackSize = args.StackSize, IntStore = args.IntStore};
         }
     }
 }
