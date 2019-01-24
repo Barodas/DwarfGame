@@ -8,13 +8,13 @@ namespace DwarfGame
     /// <summary>
     /// Instanced version of an item in the inventory.
     /// </summary>
-    [System.Serializable]
+    [Serializable]
     public class InventoryItem
     {
         public Item Item;
         public int StackSize;
 
-        private Dictionary<string, int> _intStore;
+        private Dictionary<string, int> _intStore = new Dictionary<string, int>();
         
         public Sprite ItemSprite => Item.ItemSprite;
 
@@ -22,10 +22,25 @@ namespace DwarfGame
         {
             Item = item;
             StackSize = stackSize;
+            
+            Initialise();
+        }
+
+        public void Initialise()
+        {
+            TargetParams args = new TargetParams{IntStore = _intStore};
+            ResolutionParams resolution = Item.Initialise(args);
+            _intStore = resolution.IntStore;
         }
         
         public bool UseItem(TargetParams args)
         {
+            if (Item == null)
+            {
+                LeftClickUseEmpty(args);
+                return false;
+            }
+            
             args.IntStore = _intStore;
             args.StackSize = StackSize;
             
@@ -75,6 +90,20 @@ namespace DwarfGame
                 StackSize = Item.StackLimit;
                 return remainder;
             }
+        }
+
+        public int GetStoreValue(string key)
+        {
+            return _intStore != null && _intStore.ContainsKey(key) ? _intStore[key] : 0;
+        }
+        
+        private void LeftClickUseEmpty(TargetParams args)
+        {
+            TilemapManager.Instance.DamageTile(TileLayer.Terrain,
+                TilemapManager.Instance.TerrainTilemap.WorldToCell(
+                    args.TargetPosition),
+                args.Damage, 
+                args.HitDirection);
         }
     }
 }

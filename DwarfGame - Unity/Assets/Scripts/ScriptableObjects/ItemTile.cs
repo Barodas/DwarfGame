@@ -21,6 +21,7 @@ namespace DwarfGame
 
         public override ResolutionParams RightClickUse(TargetParams args)
         {
+            ResolutionParams resolution = new ResolutionParams(args);
             Vector2 position = args.TargetType == TargetType.Tile ? args.AdjacentPosition : args.TargetPosition;
             
             if (TilemapManager.Instance.TerrainTilemap.WorldToCell(position) !=
@@ -29,10 +30,10 @@ namespace DwarfGame
                 TilemapManager.Instance.TerrainTilemap.PlaceTile(
                     TilemapManager.Instance.TerrainTilemap.WorldToCell(position),
                     this);
-                --args.StackSize;
+                --resolution.StackSize;
             }
             
-            return new ResolutionParams{StackSize = args.StackSize, IntStore = args.IntStore};
+            return resolution;
         }
     }
 }

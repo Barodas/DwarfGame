@@ -42,10 +42,24 @@ namespace DwarfGame
     {
         public TargetType TargetType;
         public ResolutionType ResolutionType;
-        public Vector2 Position;
+        public Vector2 TargetPosition;
         public HitDirection HitDirection;
         public int Damage;
         public Dictionary<string, int> IntStore;
         public int StackSize;
+
+        public ResolutionParams()
+        {    
+        }
+        
+        public ResolutionParams(TargetParams args)
+        {
+            TargetType = args.TargetType;
+            TargetPosition = args.TargetPosition;
+            HitDirection = args.HitDirection;
+            Damage = args.Damage;
+            StackSize = args.StackSize;
+            IntStore = args.IntStore;
+        }
     }
 }

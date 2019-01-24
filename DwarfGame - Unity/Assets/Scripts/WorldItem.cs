@@ -32,6 +32,8 @@ namespace DwarfGame
 
             _renderer = GetComponent<SpriteRenderer>();
             _renderer.sprite = Item.ItemSprite;
+            
+            Item.Initialise();
         }
 
         public void AddToInventory(Inventory inventory)

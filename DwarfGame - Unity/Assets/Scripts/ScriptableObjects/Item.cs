@@ -13,6 +13,16 @@ namespace DwarfGame
         public int StackLimit = 1;
         public bool ModifiesLeftUse = false;
         public bool ModifiesRightUse = false;
+
+        /// <summary>
+        /// Allows more advanced items to set up any data store information they need
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public virtual ResolutionParams Initialise(TargetParams args)
+        {
+            return new ResolutionParams(args);
+        }
         
         /// <summary>
         /// Generally treated as placing the item in some way
@@ -20,7 +30,10 @@ namespace DwarfGame
         /// <param name="args">Contains various input arguments based on target object</param>
         public virtual ResolutionParams RightClickUse(TargetParams args)
         {
-            return new ResolutionParams{ResolutionType = ResolutionType.None, StackSize = args.StackSize, IntStore = args.IntStore};
+            ResolutionParams resolution = new ResolutionParams(args);
+            resolution.ResolutionType = ResolutionType.None;
+            
+            return resolution;
         }
         
         /// <summary>
@@ -35,7 +48,7 @@ namespace DwarfGame
                 args.Damage, 
                 args.HitDirection);
             
-            return new ResolutionParams{TargetType = args.TargetType, Position = args.TargetPosition, Damage = args.Damage, StackSize = args.StackSize, IntStore = args.IntStore};
+            return new ResolutionParams(args);
         }
     }
 }
