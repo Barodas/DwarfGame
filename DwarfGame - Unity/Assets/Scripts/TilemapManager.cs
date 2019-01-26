@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -71,7 +70,7 @@ namespace DwarfGame
                     // Check if the tile is destroyed instantly
                     if (amount > tile.Item.WorldTileDamage)
                     {
-                        WorldItem worldItem = WorldItem.CreateWorldItem(new InventoryItem(tile.Item), tilemap.CellToWorld(position));
+                        WorldItem worldItem = WorldItem.CreateWorldItem(new InstanceItem(tile.Item), tilemap.CellToWorld(position));
                         tilemap.SetTile(position, null);
                     }
                     // else make a worldtile and apply damage
@@ -91,7 +90,7 @@ namespace DwarfGame
                     if (_terrainWorldTiles[position].Damage >= tile.Item.WorldTileDamage)
                     {
                         _terrainWorldTiles.Remove(position);
-                        WorldItem worldItem = WorldItem.CreateWorldItem(new InventoryItem(tile.Item), tilemap.CellToWorld(position));
+                        WorldItem worldItem = WorldItem.CreateWorldItem(new InstanceItem(tile.Item), tilemap.CellToWorld(position));
                         tilemap.SetTile(position, null);
                         EffectTilemap.SetTile(position, null);
                     }

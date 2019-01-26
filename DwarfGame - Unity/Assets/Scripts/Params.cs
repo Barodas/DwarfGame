@@ -36,6 +36,7 @@ namespace DwarfGame
         public int Damage;
         public Dictionary<string, int> IntStore;
         public int StackSize;
+        public int CurrentDurability;
     }
 
     public class ResolutionParams
@@ -47,6 +48,7 @@ namespace DwarfGame
         public int Damage;
         public Dictionary<string, int> IntStore;
         public int StackSize;
+        public int CurrentDurability;
 
         public ResolutionParams()
         {    
@@ -60,6 +62,7 @@ namespace DwarfGame
             Damage = args.Damage;
             StackSize = args.StackSize;
             IntStore = args.IntStore;
+            CurrentDurability = args.CurrentDurability;
         }
     }
 }

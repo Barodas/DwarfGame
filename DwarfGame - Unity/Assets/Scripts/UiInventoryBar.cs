@@ -25,7 +25,7 @@ namespace DwarfGame
                 float durabilityPercent = 0f;
                 if (PlayerInventory.ItemList[slot]?.Item is ItemTool tool)
                 {
-                    durabilityPercent = (float) PlayerInventory.ItemList[slot].GetStoreValue(ItemTool.DurabilityKey) /
+                    durabilityPercent = (float) PlayerInventory.ItemList[slot].CurrentDurability /
                                         tool.Durability;
                 }
                 

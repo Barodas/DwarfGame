@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace DwarfGame
 {
-    [CustomPropertyDrawer(typeof(InventoryItem))]
-    public class InventoryItemDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(SerializedInstanceItem))]
+    public class SerializedInstanceItemDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

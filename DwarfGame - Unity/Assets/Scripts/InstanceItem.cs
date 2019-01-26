@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.SymbolStore;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace DwarfGame
@@ -8,29 +6,39 @@ namespace DwarfGame
     /// <summary>
     /// Instanced version of an item in the inventory.
     /// </summary>
-    [Serializable]
-    public class InventoryItem
+    public class InstanceItem
     {
         public Item Item;
         public int StackSize;
+        public int CurrentDurability;
 
-        private Dictionary<string, int> _intStore = new Dictionary<string, int>();
+        public Dictionary<string, int> IntStore = new Dictionary<string, int>();
         
         public Sprite ItemSprite => Item.ItemSprite;
-
-        public InventoryItem(Item item, int stackSize = 1)
+        
+        public InstanceItem(Item item, int stackSize = 1, int curDurability = 0)
         {
             Item = item;
             StackSize = stackSize;
+            CurrentDurability = curDurability;
             
             Initialise();
         }
 
+        public InstanceItem(SerializedInstanceItem serializedInstanceItem)
+        {
+            Item = serializedInstanceItem.Item;
+            StackSize = serializedInstanceItem.StackSize;
+            CurrentDurability = serializedInstanceItem.CurrentDurability;
+            IntStore = serializedInstanceItem.IntStore;
+        }
+        
         public void Initialise()
         {
-            TargetParams args = new TargetParams{IntStore = _intStore};
+            TargetParams args = new TargetParams{IntStore = IntStore, CurrentDurability = CurrentDurability};
             ResolutionParams resolution = Item.Initialise(args);
-            _intStore = resolution.IntStore;
+            CurrentDurability = resolution.CurrentDurability;
+            IntStore = resolution.IntStore;
         }
         
         public bool UseItem(TargetParams args)
@@ -41,8 +49,9 @@ namespace DwarfGame
                 return false;
             }
             
-            args.IntStore = _intStore;
+            args.IntStore = IntStore;
             args.StackSize = StackSize;
+            args.CurrentDurability = CurrentDurability;
             
             ResolutionParams resolution;
             switch (args.ClickType)
@@ -55,8 +64,9 @@ namespace DwarfGame
                     break;
             }
             
-            _intStore = resolution.IntStore;
+            IntStore = resolution.IntStore;
             StackSize = resolution.StackSize;
+            CurrentDurability = args.CurrentDurability;
             
             return StackSize <= 0;
         }
@@ -64,12 +74,12 @@ namespace DwarfGame
         /// <summary>
         /// Combines 2 InventoryItem stacks. Returns true if inventoryItem.StackSize is 0.
         /// </summary>
-        /// <param name="inventoryItem"></param>
+        /// <param name="instanceItem"></param>
         /// <returns></returns>
-        public bool Combine(InventoryItem inventoryItem)
+        public bool Combine(InstanceItem instanceItem)
         {
-            inventoryItem.StackSize = Add(inventoryItem.StackSize);
-            if (inventoryItem.StackSize <= 0)
+            instanceItem.StackSize = Add(instanceItem.StackSize);
+            if (instanceItem.StackSize <= 0)
             {
                 return true;
             }
@@ -94,7 +104,7 @@ namespace DwarfGame
 
         public int GetStoreValue(string key)
         {
-            return _intStore != null && _intStore.ContainsKey(key) ? _intStore[key] : 0;
+            return IntStore != null && IntStore.ContainsKey(key) ? IntStore[key] : 0;
         }
         
         private void LeftClickUseEmpty(TargetParams args)

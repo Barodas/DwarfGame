@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace DwarfGame
 {
@@ -11,8 +10,7 @@ namespace DwarfGame
     {
         public Sprite ItemSprite;
         public int StackLimit = 1;
-        public bool ModifiesLeftUse = false;
-        public bool ModifiesRightUse = false;
+        public int Durability;
 
         /// <summary>
         /// Allows more advanced items to set up any data store information they need

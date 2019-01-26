@@ -8,29 +8,21 @@ namespace DwarfGame
     /// </summary>
     [CreateAssetMenu]
     public class ItemTool : Item
-    {
-        public const string DurabilityKey = "Durability";
-        
+    {     
         public TileClass Class = TileClass.None;
         public int BaseDamage = 1;
         public int ClassDamage = 2;
-        public int Durability = 100;
-        
+
         public override ResolutionParams Initialise(TargetParams args)
         {
-            if (args.IntStore == null)
+            if (args.CurrentDurability <= 0)
             {
-                args.IntStore = new Dictionary<string, int>();
-            }
-            
-            if (!args.IntStore.ContainsKey(DurabilityKey))
-            {
-                args.IntStore.Add(DurabilityKey, Durability);
+                args.CurrentDurability = Durability;
             }
             
             return new ResolutionParams(args);
         }
-        
+
         public override ResolutionParams LeftClickUse(TargetParams args)
         {
             // Calc Damage amount
@@ -44,8 +36,8 @@ namespace DwarfGame
             base.LeftClickUse(args);
             
             // Durability
-            args.IntStore[DurabilityKey] -= 1;
-            if (args.IntStore[DurabilityKey] <= 0)
+            args.CurrentDurability -= 1;
+            if (args.CurrentDurability <= 0)
             {
                 --args.StackSize;
             }
