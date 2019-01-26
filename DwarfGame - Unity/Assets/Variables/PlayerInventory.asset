@@ -22,14 +22,24 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: DwarfGame.IntEvent, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
-  ItemList:
+  SerializedItemList:
   - Item: {fileID: 0}
     StackSize: 0
+    Durability: 0
+    CurrentDurability: 0
   - Item: {fileID: 0}
     StackSize: 0
+    Durability: 0
+    CurrentDurability: 0
   - Item: {fileID: 0}
     StackSize: 0
+    Durability: 0
+    CurrentDurability: 0
   - Item: {fileID: 0}
     StackSize: 0
+    Durability: 0
+    CurrentDurability: 0
   - Item: {fileID: 0}
     StackSize: 0
+    Durability: 0
+    CurrentDurability: 0

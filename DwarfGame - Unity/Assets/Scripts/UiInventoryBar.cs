@@ -21,7 +21,15 @@ namespace DwarfGame
         {
             if (PlayerInventory.ItemList[slot]?.Item != null)
             {
-                UiSlots[slot].UpdateSlot(PlayerInventory.ItemList[slot].ItemSprite, PlayerInventory.ItemList[slot].StackSize);
+                // Check for durability 
+                float durabilityPercent = 0f;
+                if (PlayerInventory.ItemList[slot]?.Item is ItemTool tool)
+                {
+                    durabilityPercent = (float) PlayerInventory.ItemList[slot].CurrentDurability /
+                                        tool.Durability;
+                }
+                
+                UiSlots[slot].UpdateSlot(PlayerInventory.ItemList[slot].ItemSprite, PlayerInventory.ItemList[slot].StackSize, durabilityPercent);
             }
             else
             {

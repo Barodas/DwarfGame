@@ -9,8 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e9ac6601d7d3d44996b1bf88478e97d, type: 3}
+  m_Script: {fileID: 11500000, guid: 3b1f3afcc7e5850499f0c9812e41daea, type: 3}
   m_Name: Stone
   m_EditorClassIdentifier: 
   ItemSprite: {fileID: 21300000, guid: 7c1203a03182d5d41b63e4dc9601f98a, type: 3}
-  StackLimit: 5
+  StackLimit: 8
+  Class: 1
+  WorldTileDamage: 100
