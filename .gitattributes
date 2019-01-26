@@ -1,3 +1,7 @@
+*.cs diff=csharp text
+*.cginc text
+*.shader text
+
 # Collapse Unity-generated files on GitHub
 *.asset linguist-generated
 *.mat linguist-generated
