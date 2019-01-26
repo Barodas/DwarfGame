@@ -24,10 +24,12 @@ namespace DwarfGame
         
         public void UseSelectedItem(ItemParams args)
         {
-            if (ItemList[SelectedSlot] != null && ItemList[SelectedSlot].UseItem(args))
+            if (ItemList[SelectedSlot] != null)
             {
-                ItemList[SelectedSlot] = null;
-                InventorySlotUpdated.Invoke(SelectedSlot);
+                if (ItemList[SelectedSlot].UseItem(args))
+                {
+                    ItemList[SelectedSlot] = null;
+                }
             }
             else
             {
@@ -36,6 +38,7 @@ namespace DwarfGame
                     Item.LeftClickUseEmpty(args);
                 }
             }
+            InventorySlotUpdated.Invoke(SelectedSlot);
         }
         
         /// <summary>
