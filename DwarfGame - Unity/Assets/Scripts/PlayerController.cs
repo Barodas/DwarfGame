@@ -80,15 +80,15 @@ namespace DwarfGame
             }
             
             // Get the current target
-            TargetParams target = GetTarget();
+            ItemParams item = GetTarget();
             
             // Left Click
             if(Input.GetMouseButton(0))
             {
                 if (_canSwing)
                 {
-                    target.ClickType = ClickType.Left;
-                    PlayerInventory.UseSelectedItem(target);
+                    item.ClickType = ClickType.Left;
+                    PlayerInventory.UseSelectedItem(item);
                     
                     StartCoroutine(SwingTimer());
                 }
@@ -97,8 +97,8 @@ namespace DwarfGame
             // Right Click
             if (Input.GetMouseButtonDown(1))
             {
-                target.ClickType = ClickType.Right;
-                PlayerInventory.UseSelectedItem(target);
+                item.ClickType = ClickType.Right;
+                PlayerInventory.UseSelectedItem(item);
             }
             
             // UI Slot selection // TODO: Should this be in a separate script?
@@ -225,7 +225,7 @@ namespace DwarfGame
             }
         }
 
-        private TargetParams GetTarget()
+        private ItemParams GetTarget()
         {
             // TODO: How do we handle focusing on the foreground or background
             Vector2 rayDirection = ((Vector2) Camera.main.ScreenToWorldPoint(Input.mousePosition) - RayOrigin).normalized;
@@ -244,14 +244,14 @@ namespace DwarfGame
                     .GetTile<TileBasic>(TilemapManager.Instance.TerrainTilemap.WorldToCell(targetPosition));
                 if (tile != null)
                 {
-                    return new TargetParams {TargetType = TargetType.Tile, TileClass = tile.Item.Class, TargetPosition = targetPosition, AdjacentPosition = adjacentPosition, OriginPosition = Center, HitDirection = _normalToHitDirection[hit.normal], Damage = PlayerVars.BaseDamage};
+                    return new ItemParams {TargetType = TargetType.Tile, TileClass = tile.Item.Class, TargetPosition = targetPosition, AdjacentPosition = adjacentPosition, OriginPosition = Center, HitDirection = _normalToHitDirection[hit.normal], Damage = PlayerVars.BaseDamage};
                 }
                 
                 // TODO: Check for Background collision
                 // TODO: Check for entity collision
             }
             
-            return new TargetParams {TargetType = TargetType.None, TargetPosition = RayOrigin + rayDirection * rayDistance, AdjacentPosition = RayOrigin + rayDirection * rayDistance, OriginPosition = Center};
+            return new ItemParams {TargetType = TargetType.None, TargetPosition = RayOrigin + rayDirection * rayDistance, AdjacentPosition = RayOrigin + rayDirection * rayDistance, OriginPosition = Center};
         }
         
         private IEnumerator SwingTimer()

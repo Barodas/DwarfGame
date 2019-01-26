@@ -35,13 +35,14 @@ namespace DwarfGame
         
         public void Initialise()
         {
-            TargetParams args = new TargetParams{IntStore = IntStore, CurrentDurability = CurrentDurability};
-            ResolutionParams resolution = Item.Initialise(args);
-            CurrentDurability = resolution.CurrentDurability;
-            IntStore = resolution.IntStore;
+            ItemParams args = new ItemParams(this);
+            args = Item.Initialise(args);
+            StackSize = args.StackSize;
+            CurrentDurability = args.CurrentDurability;
+            IntStore = args.IntStore;
         }
         
-        public bool UseItem(TargetParams args)
+        public bool UseItem(ItemParams args)
         {
             if (Item == null)
             {
@@ -53,19 +54,18 @@ namespace DwarfGame
             args.StackSize = StackSize;
             args.CurrentDurability = CurrentDurability;
             
-            ResolutionParams resolution;
             switch (args.ClickType)
             {
                 default:
-                    resolution = Item.LeftClickUse(args);
+                    args = Item.LeftClickUse(args);
                     break;
                 case ClickType.Right:
-                    resolution = Item.RightClickUse(args);
+                    args = Item.RightClickUse(args);
                     break;
             }
             
-            IntStore = resolution.IntStore;
-            StackSize = resolution.StackSize;
+            IntStore = args.IntStore;
+            StackSize = args.StackSize;
             CurrentDurability = args.CurrentDurability;
             
             return StackSize <= 0;
@@ -107,7 +107,7 @@ namespace DwarfGame
             return IntStore != null && IntStore.ContainsKey(key) ? IntStore[key] : 0;
         }
         
-        private void LeftClickUseEmpty(TargetParams args)
+        private void LeftClickUseEmpty(ItemParams args)
         {
             TilemapManager.Instance.DamageTile(TileLayer.Terrain,
                 TilemapManager.Instance.TerrainTilemap.WorldToCell(

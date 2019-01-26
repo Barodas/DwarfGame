@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace DwarfGame
@@ -24,45 +23,35 @@ namespace DwarfGame
         Right
     }
     
-    public class TargetParams
+    public class ItemParams
     {
+        // Target Params
         public TargetType TargetType;
-        public TileClass TileClass;
         public ClickType ClickType;
         public Vector2 TargetPosition;
         public Vector2 AdjacentPosition;
         public Vector2 OriginPosition;
         public HitDirection HitDirection;
-        public int Damage;
-        public Dictionary<string, int> IntStore;
-        public int StackSize;
-        public int CurrentDurability;
-    }
-
-    public class ResolutionParams
-    {
-        public TargetType TargetType;
-        public ResolutionType ResolutionType;
-        public Vector2 TargetPosition;
-        public HitDirection HitDirection;
-        public int Damage;
-        public Dictionary<string, int> IntStore;
-        public int StackSize;
-        public int CurrentDurability;
-
-        public ResolutionParams()
-        {    
-        }
+        public TileClass TileClass;
         
-        public ResolutionParams(TargetParams args)
+        // Item Params
+        public int Damage;
+        public int CurrentDurability;
+        public int StackSize;
+        public Dictionary<string, int> IntStore;
+        
+        // Resolution Params
+        public ResolutionType ResolutionType;
+
+        public ItemParams()
         {
-            TargetType = args.TargetType;
-            TargetPosition = args.TargetPosition;
-            HitDirection = args.HitDirection;
-            Damage = args.Damage;
-            StackSize = args.StackSize;
-            IntStore = args.IntStore;
-            CurrentDurability = args.CurrentDurability;
+        }
+
+        public ItemParams(InstanceItem item)
+        {
+            CurrentDurability = item.CurrentDurability;
+            StackSize = item.StackSize;
+            IntStore = item.IntStore;
         }
     }
 }

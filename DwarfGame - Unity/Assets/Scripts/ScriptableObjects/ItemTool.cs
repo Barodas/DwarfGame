@@ -13,17 +13,17 @@ namespace DwarfGame
         public int BaseDamage = 1;
         public int ClassDamage = 2;
 
-        public override ResolutionParams Initialise(TargetParams args)
+        public override ItemParams Initialise(ItemParams args)
         {
             if (args.CurrentDurability <= 0)
             {
                 args.CurrentDurability = Durability;
             }
             
-            return new ResolutionParams(args);
+            return args;
         }
 
-        public override ResolutionParams LeftClickUse(TargetParams args)
+        public override ItemParams LeftClickUse(ItemParams args)
         {
             // Calc Damage amount
             args.Damage = BaseDamage;
@@ -42,7 +42,7 @@ namespace DwarfGame
                 --args.StackSize;
             }
             
-            return new ResolutionParams(args);
+            return args;
         }
     }
 }

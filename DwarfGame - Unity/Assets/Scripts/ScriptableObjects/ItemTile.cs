@@ -19,9 +19,8 @@ namespace DwarfGame
         public TileClass Class = TileClass.None;
         public int WorldTileDamage = 1;
 
-        public override ResolutionParams RightClickUse(TargetParams args)
+        public override ItemParams RightClickUse(ItemParams args)
         {
-            ResolutionParams resolution = new ResolutionParams(args);
             Vector2 position = args.TargetType == TargetType.Tile ? args.AdjacentPosition : args.TargetPosition;
             
             if (TilemapManager.Instance.TerrainTilemap.WorldToCell(position) !=
@@ -30,10 +29,10 @@ namespace DwarfGame
                 TilemapManager.Instance.TerrainTilemap.PlaceTile(
                     TilemapManager.Instance.TerrainTilemap.WorldToCell(position),
                     this);
-                --resolution.StackSize;
+                --args.StackSize;
             }
             
-            return resolution;
+            return args;
         }
     }
 }

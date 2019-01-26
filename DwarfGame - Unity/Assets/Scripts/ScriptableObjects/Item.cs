@@ -17,28 +17,26 @@ namespace DwarfGame
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
-        public virtual ResolutionParams Initialise(TargetParams args)
+        public virtual ItemParams Initialise(ItemParams args)
         {
-            return new ResolutionParams(args);
+            return args;
         }
         
         /// <summary>
         /// Generally treated as placing the item in some way
         /// </summary>
         /// <param name="args">Contains various input arguments based on target object</param>
-        public virtual ResolutionParams RightClickUse(TargetParams args)
+        public virtual ItemParams RightClickUse(ItemParams args)
         {
-            ResolutionParams resolution = new ResolutionParams(args);
-            resolution.ResolutionType = ResolutionType.None;
-            
-            return resolution;
+            args.ResolutionType = ResolutionType.None;
+            return args;
         }
         
         /// <summary>
         /// Generally treated as swinging the item at the target position
         /// </summary>
         /// <param name="args">Contains various input arguments based on target object</param>
-        public virtual ResolutionParams LeftClickUse(TargetParams args)
+        public virtual ItemParams LeftClickUse(ItemParams args)
         {
             TilemapManager.Instance.DamageTile(TileLayer.Terrain,
                 TilemapManager.Instance.TerrainTilemap.WorldToCell(
@@ -46,7 +44,7 @@ namespace DwarfGame
                 args.Damage, 
                 args.HitDirection);
             
-            return new ResolutionParams(args);
+            return args;
         }
     }
 }

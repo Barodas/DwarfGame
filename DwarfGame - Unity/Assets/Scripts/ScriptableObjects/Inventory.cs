@@ -22,7 +22,7 @@ namespace DwarfGame
             InventorySelectedChanged = new IntEvent();
         }
         
-        public void UseSelectedItem(TargetParams args)
+        public void UseSelectedItem(ItemParams args)
         {
             if (ItemList[SelectedSlot] != null && ItemList[SelectedSlot].UseItem(args))
             {
