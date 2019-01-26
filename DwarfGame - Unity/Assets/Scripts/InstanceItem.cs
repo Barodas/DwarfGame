@@ -43,13 +43,7 @@ namespace DwarfGame
         }
         
         public bool UseItem(ItemParams args)
-        {
-            if (Item == null)
-            {
-                LeftClickUseEmpty(args);
-                return false;
-            }
-            
+        {          
             args.IntStore = IntStore;
             args.StackSize = StackSize;
             args.CurrentDurability = CurrentDurability;
@@ -105,15 +99,6 @@ namespace DwarfGame
         public int GetStoreValue(string key)
         {
             return IntStore != null && IntStore.ContainsKey(key) ? IntStore[key] : 0;
-        }
-        
-        private void LeftClickUseEmpty(ItemParams args)
-        {
-            TilemapManager.Instance.DamageTile(TileLayer.Terrain,
-                TilemapManager.Instance.TerrainTilemap.WorldToCell(
-                    args.TargetPosition),
-                args.Damage, 
-                args.HitDirection);
         }
     }
 }

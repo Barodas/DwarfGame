@@ -27,8 +27,15 @@ namespace DwarfGame
             if (ItemList[SelectedSlot] != null && ItemList[SelectedSlot].UseItem(args))
             {
                 ItemList[SelectedSlot] = null;
+                InventorySlotUpdated.Invoke(SelectedSlot);
             }
-            InventorySlotUpdated.Invoke(SelectedSlot);
+            else
+            {
+                if (args.ClickType == ClickType.Left)
+                {
+                    Item.LeftClickUseEmpty(args);
+                }
+            }
         }
         
         /// <summary>

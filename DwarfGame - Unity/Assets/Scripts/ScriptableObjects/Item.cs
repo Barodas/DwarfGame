@@ -46,5 +46,14 @@ namespace DwarfGame
             
             return args;
         }
+        
+        public static void LeftClickUseEmpty(ItemParams args)
+        {
+            TilemapManager.Instance.DamageTile(TileLayer.Terrain,
+                TilemapManager.Instance.TerrainTilemap.WorldToCell(
+                    args.TargetPosition),
+                args.Damage, 
+                args.HitDirection);
+        }
     }
 }
