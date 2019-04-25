@@ -37,6 +37,8 @@ sysinfo.txt
 *.apk
 *.unitypackage
 
-# Corgi Engine
-/Assets/CorgiEngine
-/Assets/CorgiEngine.meta
+# Asset Packs Folder
+*/Assets/Asset Packs
+*/Assets/Asset Packs.meta
+*/Assets/Gizmos/Cinemachine
+*/Assets/Gizmos/Cinemachine.meta
